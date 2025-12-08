@@ -1,6 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=8 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
+[ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
+sky_top_color = Color(0, 0.373333, 0.7, 1)
+sky_horizon_color = Color(0.676573, 0.5544, 0.77, 1)
+sky_curve = 0.191184
+
+[sub_resource type="Sky" id="Sky_h6w6j"]
+sky_material = SubResource("ProceduralSkyMaterial_chb0x")
+
+[sub_resource type="Environment" id="Environment_uj03q"]
+background_mode = 2
+sky = SubResource("Sky_h6w6j")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_nuf3y"]
 
@@ -8,6 +21,14 @@
 size = Vector3(1, 0.0372925, 1)
 
 [node name="test-scene" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_uj03q")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.00082503, -0.99783, -0.0658334, -0.0125039, -0.0658385, 0.997752, -0.999922, 5.82031e-11, -0.0125311, 0, 3.76075, 0)
+shadow_enabled = true
+shadow_blur = 0.1
 
 [node name="test-ground" type="MeshInstance3D" parent="."]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
@@ -19,8 +40,10 @@ mesh = SubResource("PlaneMesh_nuf3y")
 transform = Transform3D(1.95602, 0, 0, 0, 1.95602, 0, 0, 0, 1.95602, 0, -0.00631714, 0)
 shape = SubResource("BoxShape3D_fcwaw")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.97665, 0.214838, 0, -0.214838, 0.97665, -0.0654402, 1.97844, 4.8557)
-
 [node name="Player" parent="." instance=ExtResource("1_p2yof")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.15076, 2.28361, -1.4375)
+
+[node name="CameraZoomArea" parent="." instance=ExtResource("2_2osio")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 7.81221, 2.35321, 0)
+target_arm_length = 10.0
+zoom_lerp_speed = 2.0
