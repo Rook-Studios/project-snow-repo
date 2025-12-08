@@ -1,15 +1,26 @@
-[gd_scene load_steps=3 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=4 format=3 uid="uid://duxa77mmorjsv"]
+
+[ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_nuf3y"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_3512w"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_fcwaw"]
+size = Vector3(1, 0.0372925, 1)
 
 [node name="test-scene" type="Node3D"]
 
 [node name="test-ground" type="MeshInstance3D" parent="."]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 mesh = SubResource("PlaneMesh_nuf3y")
 
-[node name="test-player" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.33, 0, 0, 0, 0.33, 0, 0, 0, 0.33, -1.65267, 0.790583, -0.177344)
-mesh = SubResource("CapsuleMesh_3512w")
+[node name="StaticBody3D" type="StaticBody3D" parent="test-ground"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="test-ground/StaticBody3D"]
+transform = Transform3D(1.95602, 0, 0, 0, 1.95602, 0, 0, 0, 1.95602, 0, -0.00631714, 0)
+shape = SubResource("BoxShape3D_fcwaw")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.97665, 0.214838, 0, -0.214838, 0.97665, -0.0654402, 1.97844, 4.8557)
+
+[node name="Player" parent="." instance=ExtResource("1_p2yof")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.15076, 2.28361, -1.4375)
