@@ -1,15 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=2 format=3 uid="uid://duxa77mmorjsv"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_nuf3y"]
 
-[sub_resource type="SphereMesh" id="SphereMesh_h7qc3"]
-
 [node name="test-scene" type="Node3D"]
 
-[node name="test-ground" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
 mesh = SubResource("PlaneMesh_nuf3y")
-
-[node name="evil-broken-test-node" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.21334, 0)
-mesh = SubResource("SphereMesh_h7qc3")
