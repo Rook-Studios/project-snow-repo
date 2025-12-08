@@ -49,6 +49,7 @@ extends CharacterBody3D
 @export var camera_sway_enabled: bool = true
 @export var camera_sway_amplitude: float = 0.03  # side-to-side in meters
 
+@export var controls_enabled: bool = true
 
 
 
@@ -100,11 +101,23 @@ func _ready() -> void:
 		_orient_ref = get_node_or_null(orientation_node) as Node3D
 	else:
 		_orient_ref = _pivot
+	
+		# Find DialogueUI and connect to its signals (group added in its _ready()).
+	var ui_nodes := get_tree().get_nodes_in_group("DialogueUI")
+	if ui_nodes.size() > 0:
+		var ui = ui_nodes[0]
+		if not ui.opened.is_connected(_on_dialogue_opened):
+			ui.opened.connect(_on_dialogue_opened)
+		if not ui.closed.is_connected(_on_dialogue_closed):
+			ui.closed.connect(_on_dialogue_closed)
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not controls_enabled:
+		return
+
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		_yaw -= event.relative.x * mouse_sensitivity
 		var dy = event.relative.y * mouse_sensitivity
@@ -128,6 +141,19 @@ func _apply_pivot_rotation() -> void:
 	_pivot.rotation = Vector3(_pitch, _yaw, 0.0)
 
 func _physics_process(delta: float) -> void:
+	if not controls_enabled:
+		# Keep the player grounded and still while frozen.
+		if is_on_floor():
+			velocity = Vector3(0, -0.1, 0)  # gentle stick-to-floor
+		else:
+			# If somehow in air, fall normally but ignore controls.
+			var g: float = (ProjectSettings.get_setting("physics/3d/default_gravity") as float) * gravity_scale
+			velocity.y = max(velocity.y - g * delta, -max_fall_speed)
+			velocity.x = 0
+			velocity.z = 0
+		move_and_slide()
+		return
+
 	var g: float = (ProjectSettings.get_setting("physics/3d/default_gravity") as float) * gravity_scale
 
 	# 1) Input direction, camera-relative if _orient_ref set
@@ -248,3 +274,17 @@ func _apply_camera_bob(delta: float) -> void:
 
 func _jump_velocity(gravity: float) -> float:
 	return sqrt(2.0 * gravity * jump_height)
+
+
+func _on_dialogue_opened() -> void:
+	set_controls_enabled(false)
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func _on_dialogue_closed() -> void:
+	set_controls_enabled(true)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+func set_controls_enabled(enabled: bool) -> void:
+	controls_enabled = enabled
+	if not enabled:
+		velocity = Vector3.ZERO   # kill momentum immediately

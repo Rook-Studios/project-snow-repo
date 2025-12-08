@@ -16,6 +16,7 @@ mesh = SubResource("CapsuleMesh_j7cem")
 
 [node name="Prompt3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24634, 0)
+billboard = 1
 text = "hello"
 
 [node name="InteractZone" type="Area3D" parent="."]

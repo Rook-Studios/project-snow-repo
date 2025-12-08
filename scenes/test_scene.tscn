@@ -71,4 +71,4 @@ intro_lines = Array[String](["hopefully this works with multiple guys", "aaaaaaa
 voice_stream = ExtResource("5_kgffw")
 voice_pitch_min = 0.9
 voice_pitch_max = 1.1
-voice_blip_every = 6
+voice_blip_every = 12
