@@ -46,4 +46,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.15076, 2.28361, -1.4375)
 [node name="CameraZoomArea" parent="." instance=ExtResource("2_2osio")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 7.81221, 2.35321, 0)
 target_arm_length = 10.0
-zoom_lerp_speed = 2.0
+zoom_lerp_speed = 0.66
+exit_zoom_lerp_speed = 1.0

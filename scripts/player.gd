@@ -35,6 +35,19 @@ extends CharacterBody3D
 @export var max_arm_length: float = 100.0
 @export var arm_lerp_speed: float = 5.0   # how fast the camera moves to the target
 
+## --- Camera Bob ---
+@export_category("Camera Bob")
+@export var camera_bob_enabled: bool = true
+@export var camera_bob_amplitude: float = 0.05  # how high/low in meters
+@export var camera_bob_frequency: float = 6.0   # how fast the bob cycles
+@export var camera_bob_speed_threshold: float = 0.1  # min horizontal speed to start bobbing
+@export var camera_bob_return_speed: float = 10.0    # how fast it returns to neutral when stopping
+@export var camera_sway_enabled: bool = true
+@export var camera_sway_amplitude: float = 0.03  # side-to-side in meters
+
+
+
+
 ## --- Optional external orientation (will auto-use Pivot if empty) ---
 @export_category("Orientation")
 @export var orientation_node: NodePath
@@ -47,7 +60,13 @@ var _pitch := 0.0
 @onready var _camera: Camera3D = $Pivot/SpringArm3D/Camera3D
 var _orient_ref: Node3D
 
-var _target_arm_length: float = 0.0   # <-- NEW: what we lerp toward
+var _target_arm_length: float = 0.0
+var _bob_phase: float = 0.0
+var _pivot_base_y: float
+var _pivot_base_x: float
+var _default_arm_length: float = 0.0   # NEW: remember default zoom
+
+
 
 
 func _ready() -> void:
@@ -60,12 +79,17 @@ func _ready() -> void:
 	_camera.fov = camera_fov
 	_camera.near = camera_near
 	_camera.far = camera_far
+	_pivot_base_y = _pivot.position.y
+	_pivot_base_x = _pivot.position.x
 
-	# Apply spring arm starting length, clamped to min/max
+	# Apply spring arm starting length, clamped to min/max, and remember as default
 	if arm_start_length <= 0.0:
 		arm_start_length = _spring.spring_length
-	_target_arm_length = clamp(arm_start_length, min_arm_length, max_arm_length)
+
+	_default_arm_length = clamp(arm_start_length, min_arm_length, max_arm_length)
+	_target_arm_length = _default_arm_length
 	_spring.spring_length = _target_arm_length
+
 
 	# Use Pivot for camera-relative movement unless user set something else
 	if orientation_node != NodePath():
@@ -141,6 +165,9 @@ func _physics_process(delta: float) -> void:
 	var t = clamp(arm_lerp_speed * delta, 0.0, 1.0)
 	_spring.spring_length = lerp(_spring.spring_length, _target_arm_length, t)
 
+	# 6) Camera bobbing
+	_apply_camera_bob(delta)
+
 func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
 	# Optional per-area override of zoom speed
 	if speed > 0.0:
@@ -148,6 +175,59 @@ func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
 
 	_target_arm_length = clamp(target_length, min_arm_length, max_arm_length)
 
+
+func restore_default_zoom(speed: float = -1.0) -> void:
+	# Called by zoom areas when you leave them
+	if speed > 0.0:
+		arm_lerp_speed = speed
+
+	_target_arm_length = _default_arm_length
+
+func _apply_camera_bob(delta: float) -> void:
+	if not camera_bob_enabled:
+		# Smoothly return pivot to base position if disabled at runtime
+		_pivot.position.y = lerp(
+			_pivot.position.y,
+			_pivot_base_y,
+			camera_bob_return_speed * delta
+		)
+		_pivot.position.x = lerp(
+			_pivot.position.x,
+			_pivot_base_x,
+			camera_bob_return_speed * delta
+		)
+		return
+
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	var should_bob := horizontal_speed > camera_bob_speed_threshold and is_on_floor()
+
+	if should_bob:
+		# Advance phase based on frequency and how fast we're moving (normalized by walk_speed)
+		var speed_factor = clamp(horizontal_speed / max(walk_speed, 0.01), 0.5, 1.5)
+		_bob_phase += camera_bob_frequency * speed_factor * delta
+
+		var y_offset := sin(_bob_phase) * camera_bob_amplitude
+
+		var x_offset := 0.0
+		if camera_sway_enabled:
+			# Cosine gives a 90° phase offset from the vertical bob
+			x_offset = cos(_bob_phase) * camera_sway_amplitude
+
+		_pivot.position.y = _pivot_base_y + y_offset
+		_pivot.position.x = _pivot_base_x + x_offset
+	else:
+		# Reset phase and gently move pivot back to its base position
+		_bob_phase = 0.0
+		_pivot.position.y = lerp(
+			_pivot.position.y,
+			_pivot_base_y,
+			camera_bob_return_speed * delta
+		)
+		_pivot.position.x = lerp(
+			_pivot.position.x,
+			_pivot_base_x,
+			camera_bob_return_speed * delta
+		)
 
 func _jump_velocity(gravity: float) -> float:
 	return sqrt(2.0 * gravity * jump_height)
