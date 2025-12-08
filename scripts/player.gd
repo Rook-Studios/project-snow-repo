@@ -12,6 +12,10 @@ extends CharacterBody3D
 @export var jump_height: float = 1.1
 @export var gravity_scale: float = 1.0
 @export var max_fall_speed: float = 22.0
+@export var jump_release_gravity_scale: float = 2.0  # extra gravity when jump is released while rising
+@export var fall_gravity_scale: float = 1.4          # a bit more gravity on the way down (nice feel)
+@export_range(0.0, 1.0, 0.05) var jump_cut_factor: float = 0.5  # one-time damping on release (0.5 = halve upward speed)
+
 
 ## --- Camera Orbit ---
 @export_category("Camera Orbit")
@@ -150,13 +154,26 @@ func _physics_process(delta: float) -> void:
 	velocity.x = current_vxz.x
 	velocity.z = current_vxz.y
 
-	# 3) Gravity + jump
+	# 3) Gravity + jump (variable height)
 	if is_on_floor():
 		velocity.y = min(velocity.y, 0.0)
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = _jump_velocity(g)
 	else:
-		velocity.y = max(velocity.y - g * delta, -max_fall_speed)
+		if velocity.y > 0.0:
+			# Rising
+			if Input.is_action_pressed("jump"):
+				# normal rise
+				velocity.y -= g * gravity_scale * delta
+			else:
+				# jump released early: stronger gravity (decay)
+				velocity.y -= g * gravity_scale * jump_release_gravity_scale * delta
+				if Input.is_action_just_released("jump"):
+					velocity.y *= jump_cut_factor  # one-time damping for a crisp short hop
+		else:
+			# Falling
+			velocity.y = max(velocity.y - g * gravity_scale * fall_gravity_scale * delta, -max_fall_speed)
+
 
 	# 4) Move
 	move_and_slide()
