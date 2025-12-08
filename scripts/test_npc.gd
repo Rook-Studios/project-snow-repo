@@ -2,6 +2,13 @@ extends Node3D
 
 @export var display_name: String = "Villager"
 @export_multiline var intro_line: String = "Morning! Lovely winter day, isn't it?"
+@export var intro_lines: Array[String] = []
+
+# Optional voice for this NPC
+@export var voice_stream: AudioStream
+@export var voice_pitch_min: float = 0.95
+@export var voice_pitch_max: float = 1.05
+@export var voice_blip_every: int = 2
 
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
@@ -31,38 +38,39 @@ func _unhandled_input(event: InputEvent) -> void:
 		_start_talk()
 
 func _start_talk() -> void:
-	print("talking initiated")
 	var ui := _find_dialogue_ui()
 	if ui == null:
-		push_warning("DialogueUI not found in scene. Please instance scenes/DialogueUI.tscn in your world.")
+		push_warning("DialogueUI not found in scene. Please instance scenes/ui/DialogueUI.tscn.")
 		return
+
 	_talking = true
 	_update_prompt()
-	ui.show_line("%s: %s" % [display_name, intro_line])
 
-	# Avoid double-connecting across talks
+	# Build lines without name prefix (name is shown in its own label)
+	var lines: Array[String] = []
+	if intro_line.strip_edges() != "":
+		lines.append(intro_line)
+	for l in intro_lines:
+		lines.append(l)
+
+	# Set speaker name + voice, then show lines
+	ui.set_speaker_name(display_name)
+	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
+	ui.show_lines(lines)
+
 	if not ui.closed.is_connected(_on_ui_closed):
 		ui.closed.connect(_on_ui_closed)
-
-	# IMPORTANT: consume the same input event so UI doesn't immediately close
 	get_viewport().set_input_as_handled()
-
 
 func _on_ui_closed() -> void:
 	_talking = false
 	_update_prompt()
 
 func _find_dialogue_ui() -> Node:
-	# Search the scene tree for a DialogueUI instance (by script or node name).
-	# If you autoload it later, just return get_node("/root/DialogueUI")
 	for n in get_tree().get_nodes_in_group("DialogueUI"):
 		return n
-	# Fallback by name:
 	var root := get_tree().current_scene
-	if root:
-		var node := root.get_node_or_null("DialogueUI")
-		if node: return node
-	return null
+	return root.get_node_or_null("DialogueUI") if root else null
 
 func _update_prompt() -> void:
 	_prompt.visible = _player_in_range and not _talking
