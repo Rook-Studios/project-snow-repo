@@ -5,7 +5,7 @@ signal closed
 
 @onready var _panel: Panel = $Panel
 @onready var _line: Label = $Panel/MarginContainer/VBoxContainer/LineLabel
-@onready var _name: Label = $Panel/HBoxContainer/NameLabel
+@onready var _name: Label = $Panel/NamePanel/HBoxContainer/NameLabel
 @onready var _voice: AudioStreamPlayer = $VoicePlayer
 var _open := false
 var _just_opened := false
