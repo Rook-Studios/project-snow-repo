@@ -9,7 +9,6 @@ radius = 1.34204
 
 [node name="TestNPC" type="Node3D"]
 script = ExtResource("1_opakj")
-intro_line = "you forgot to add a line stoopid"
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("CapsuleMesh_j7cem")
