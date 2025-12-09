@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
+[ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://ces7xxkebuaew" path="res://scenes/test_npc.tscn" id="4_uxi6s"]
-[ext_resource type="Resource" uid="uid://xx6cntwmkjha" path="res://resources/villager_1_day_1.tres" id="5_kchuy"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="5_kgffw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
@@ -53,10 +53,22 @@ target_arm_length = 10.0
 zoom_lerp_speed = 1.0
 exit_zoom_lerp_speed = 1.0
 
+[node name="DialogueUI" parent="." instance=ExtResource("3_06gvr")]
+
 [node name="TestNPC" parent="." instance=ExtResource("4_uxi6s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.42574, 1.64359, 5.24249)
-dialogue = ExtResource("5_kchuy")
+intro_line = "hello i am villager number one, i hope you  enjoy this liminal plane"
+intro_lines = Array[String](["short line", "this is a looooooooooong line, with a lot of punctuation and spaaaaaces. hello. hi. aaaahh. idk lol."])
 voice_stream = ExtResource("5_kgffw")
 voice_pitch_min = 0.9
 voice_pitch_max = 1.1
 voice_blip_every = 6
+
+[node name="TestNPC2" parent="." instance=ExtResource("4_uxi6s")]
+transform = Transform3D(0.688962, 0, -0.724797, 0, 1, 0, 0.724797, 0, 0.688962, 2.17354, 1.64359, -3.92139)
+intro_line = "hello i am villager number two"
+intro_lines = Array[String](["hopefully this works with multiple guys", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!"])
+voice_stream = ExtResource("5_kgffw")
+voice_pitch_min = 0.9
+voice_pitch_max = 1.1
+voice_blip_every = 12

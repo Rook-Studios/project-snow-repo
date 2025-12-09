@@ -1,13 +1,10 @@
 extends Node3D
 
-@export var npc_id: StringName = "villager_a"
 @export var display_name: String = "Villager"
+@export_multiline var intro_line: String = "Morning! Lovely winter day, isn't it?"
+@export var intro_lines: Array[String] = []
 
-# Dialogue data
-@export var dialogue: Dialogue                     # assign a Dialogue .tres here
-@export var start_by_day: Dictionary = {}          # e.g. {"1":"start", "2":"snow_chat"}
-
-# Optional voice for this NPC (used by DialogueUI)
+# Optional voice for this NPC
 @export var voice_stream: AudioStream
 @export var voice_pitch_min: float = 0.95
 @export var voice_pitch_max: float = 1.05
@@ -16,16 +13,13 @@ extends Node3D
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
 
-var _player_in_range: bool = false
-var _talking: bool = false
+var _player_in_range := false
+var _talking := false
 
 func _ready() -> void:
 	_prompt.visible = false
 	_zone.body_entered.connect(_on_body_entered)
 	_zone.body_exited.connect(_on_body_exited)
-	# Listen for dialogue ending (from the manager)
-	if not DialogueMgr.finished.is_connected(_on_dialogue_finished):
-		DialogueMgr.finished.connect(_on_dialogue_finished)
 
 func _on_body_entered(body: Node) -> void:
 	if body is CharacterBody3D:
@@ -44,32 +38,39 @@ func _unhandled_input(event: InputEvent) -> void:
 		_start_talk()
 
 func _start_talk() -> void:
-	if dialogue == null:
-		push_warning("No Dialogue resource assigned on NPC: %s" % name)
+	var ui := _find_dialogue_ui()
+	if ui == null:
+		push_warning("DialogueUI not found in scene. Please instance scenes/ui/DialogueUI.tscn.")
 		return
 
 	_talking = true
 	_update_prompt()
 
-	# Set speaker name & voice on the UI (purely presentational)
-	DialogueUI.set_speaker_name(display_name)
-	DialogueUI.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
+	# Build lines without name prefix (name is shown in its own label)
+	var lines: Array[String] = []
+	if intro_line.strip_edges() != "":
+		lines.append(intro_line)
+	for l in intro_lines:
+		lines.append(l)
 
-	# Choose start node for the current day (fallback to dialogue.start_node)
-	var day_key: String = str(DayMgr.current_day)
-	var start_id: StringName = StringName(start_by_day.get(day_key, dialogue.start_node))
+	# Set speaker name + voice, then show lines
+	ui.set_speaker_name(display_name)
+	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
+	ui.show_lines(lines)
 
-	# Begin conversation via the manager
-	DialogueMgr.begin(npc_id, dialogue, start_id)
-
-	# Consume the same input so UI doesn't immediately advance/close
+	if not ui.closed.is_connected(_on_ui_closed):
+		ui.closed.connect(_on_ui_closed)
 	get_viewport().set_input_as_handled()
 
-func _on_dialogue_finished(finished_npc_id: StringName) -> void:
-	if finished_npc_id != npc_id:
-		return
+func _on_ui_closed() -> void:
 	_talking = false
 	_update_prompt()
+
+func _find_dialogue_ui() -> Node:
+	for n in get_tree().get_nodes_in_group("DialogueUI"):
+		return n
+	var root := get_tree().current_scene
+	return root.get_node_or_null("DialogueUI") if root else null
 
 func _update_prompt() -> void:
 	_prompt.visible = _player_in_range and not _talking

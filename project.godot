@@ -15,12 +15,6 @@ run/main_scene="res://scenes/test_scene.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://assets/test-assets/icon.svg"
 
-[autoload]
-
-DialogueMgr="*res://scripts/dialogue_manager.gd"
-DayMgr="*res://scripts/day_manager.gd"
-DialogueUI="*res://scenes/dialogue_ui.tscn"
-
 [display]
 
 window/size/viewport_width=1920
@@ -31,7 +25,6 @@ window/size/mode=4
 
 folder_colors={
 "res://assets/": "teal",
-"res://resources/": "purple",
 "res://scenes/": "red",
 "res://scripts/": "orange"
 }

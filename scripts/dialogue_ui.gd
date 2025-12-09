@@ -31,11 +31,8 @@ var _pitch_max := 1.05
 var _voice_blip_every := 2
 
 func _ready() -> void:
-	add_to_group("DialogueUI")
-	DialogueMgr.started.connect(_on_started)
-	DialogueMgr.node_changed.connect(_on_node_changed)
-	DialogueMgr.finished.connect(_on_finished)
 	_panel.visible = false
+	add_to_group("DialogueUI")
 
 # Public API
 func set_speaker_name(name_text: String) -> void:
@@ -132,21 +129,4 @@ func _unhandled_input(event: InputEvent) -> void:
 		_just_opened = false
 		return
 	if event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel"):
-		if _typing:
-			_advance_or_close() # finishes current line instantly (your existing helper)
-		else:
-			DialogueMgr.advance()
-
-
-func _on_started(_npc_id: StringName) -> void:
-	_panel.visible = true
-	_open = true
-	_just_opened = true
-	emit_signal("opened")
-
-func _on_node_changed(text: String, choices: Array) -> void:
-	# For now we ignore choices; we’ll add buttons later.
-	_start_typing(text)  # use your existing typewriter starter
-
-func _on_finished(_npc_id: StringName) -> void:
-	hide_dialogue()      # your existing close method
+		_advance_or_close()
