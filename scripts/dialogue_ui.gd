@@ -9,17 +9,24 @@ signal choice_selected(line_index: int, choice_index: int)
 @onready var _name: Label = $Panel/NamePanel/HBoxContainer/NameLabel
 @onready var _voice: AudioStreamPlayer = $VoicePlayer
 @onready var _choices: HBoxContainer = $Panel/ChoicesPanel/ChoicesBox
-@onready var choices_panel = $Panel/ChoicesPanel
+@onready var choices_panel: Control = $Panel/ChoicesPanel
 
 var _open := false
 var _just_opened := false
 
 # --- Typewriter settings ---
-@export var chars_per_second: float = 40.0          # typing speed
-@export var blip_every_n_chars: int = 2             # play a blip every N typed characters
-@export var ignore_space_for_blip: bool = true      # don't blip on spaces/punctuation
+@export var chars_per_second: float = 40.0
+@export var blip_every_n_chars: int = 2
+@export var ignore_space_for_blip: bool = true
 
-# runtime typing state
+# --- UX: fast-forward ---
+@export_category("UX")
+@export var fast_mode_action: StringName = &"dialogue_fast"
+@export var fast_mode_chars_per_second: float = 1000.0
+@export var fast_mode_auto_advance: bool = true
+var _fast_mode: bool = false
+
+# --- runtime typing state ---
 var _lines: Array[String] = []
 var _idx: int = 0
 var _typing: bool = false
@@ -28,13 +35,13 @@ var _typed_text: String = ""
 var _char_accum: float = 0.0
 var _blip_counter: int = 0
 
-# voice settings (per NPC)
+# --- voice settings (per NPC) ---
 var _voice_enabled := false
 var _pitch_min := 0.95
 var _pitch_max := 1.05
 var _voice_blip_every := 2
 
-# --- Choice state (new) ---
+# --- Choice state ---
 var _pending_choices: Array[String] = []
 var _choice_line_index: int = -1
 var _choice_shown: bool = false
@@ -42,6 +49,7 @@ var _choice_shown: bool = false
 func _ready() -> void:
 	_panel.visible = false
 	_choices.visible = false
+	choices_panel.visible = false
 	add_to_group("DialogueUI")
 
 # Public API
@@ -59,7 +67,6 @@ func show_line(text: String) -> void:
 	show_lines([text])
 
 func show_lines(lines: Array[String]) -> void:
-	# reset choice UI/state each time we (re)open
 	_clear_choices_ui()
 	_pending_choices.clear()
 	_choice_line_index = -1
@@ -75,15 +82,12 @@ func show_lines(lines: Array[String]) -> void:
 	_start_typing(_lines[_idx])
 	emit_signal("opened")
 
-# NEW: schedule choices to appear after a specific line index (0-based)
+# schedule choices after a specific line index (0-based)
 func show_lines_with_choice_at(lines: Array[String], after_line_index: int, choices: Array[String]) -> void:
-	# First open the lines (this resets internal state):
-	show_lines(lines)
-	# Then set up the choices for the specified line:
+	show_lines(lines) # reset/open first
 	_pending_choices = choices.duplicate()
 	_choice_line_index = after_line_index
 	_choice_shown = false
-
 
 func hide_dialogue() -> void:
 	_panel.visible = false
@@ -106,14 +110,26 @@ func _start_typing(text: String) -> void:
 	_typing = true
 
 func _process(delta: float) -> void:
-	if not _open or not _typing:
+	if not _open:
 		return
 
-	_char_accum += chars_per_second * delta
+	# fast mode while key held
+	_fast_mode = Input.is_action_pressed(fast_mode_action)
+
+	# auto-advance through finished lines while fast mode is held (unless choices are visible)
+	if not _typing and _fast_mode and fast_mode_auto_advance and not choices_panel.visible and not _choices.visible:
+		_advance_or_close()
+		return
+
+	if not _typing:
+		return
+
+	var cps := fast_mode_chars_per_second if _fast_mode else chars_per_second
+
+	_char_accum += cps * delta
 	var chars_to_add := int(_char_accum)
 	if chars_to_add <= 0:
 		return
-
 	_char_accum -= float(chars_to_add)
 
 	var start_idx := _typed_text.length()
@@ -121,7 +137,7 @@ func _process(delta: float) -> void:
 	_typed_text = _full_text.substr(0, end_idx)
 	_line.text = _typed_text
 
-	# play blips based on newly added characters
+	# blips for new characters
 	for i in range(start_idx, end_idx):
 		var c := _full_text[i]
 		if ignore_space_for_blip and (c == " " or c == "\n" or c == "." or c == "," or c == "!" or c == "?"):
@@ -133,25 +149,27 @@ func _process(delta: float) -> void:
 
 	if _typed_text == _full_text:
 		_typing = false
+		# if we just finished a line in fast mode, auto-advance right away (choices will still interrupt correctly)
+		if _fast_mode and fast_mode_auto_advance and not choices_panel.visible and not _choices.visible:
+			_advance_or_close()
 
-# --- Advance / choices (modified) ---
+# --- Advance / choices ---
 func _advance_or_close() -> void:
 	if not _open:
 		return
 
 	if _typing:
-		# Finish current line instantly
 		_typed_text = _full_text
 		_line.text = _full_text
 		_typing = false
 		return
 
-	# If a choice is scheduled for this line, show it now (before advancing)
+	# show scheduled choices for this line (before advancing)
 	if _pending_choices.size() > 0 and _choice_line_index == _idx and not _choice_shown:
 		_show_choices_for_current_line()
 		return
 
-	# Otherwise continue to next line or close
+	# next line or close
 	_idx += 1
 	if _idx >= _lines.size():
 		hide_dialogue()
@@ -160,7 +178,9 @@ func _advance_or_close() -> void:
 
 func _show_choices_for_current_line() -> void:
 	_choice_shown = true
+	choices_panel.visible = true
 	_choices.visible = true
+
 	# rebuild buttons
 	for c in _choices.get_children():
 		c.queue_free()
@@ -169,14 +189,16 @@ func _show_choices_for_current_line() -> void:
 		var b := Button.new()
 		b.text = _pending_choices[i]
 		var idx := i
+		b.focus_mode = Control.FOCUS_ALL
 		b.pressed.connect(func():
 			_choices.visible = false
+			choices_panel.visible = false
 			emit_signal("choice_selected", _idx, idx)
 			# reset choice state
 			_pending_choices.clear()
 			_choice_line_index = -1
 			_choice_shown = false
-			# DO NOT close here. NPC will call ui.show_lines(follow) right away.
+			# do not close here; NPC will immediately call show_lines(follow)
 		)
 		_choices.add_child(b)
 
@@ -186,14 +208,16 @@ func _show_choices_for_current_line() -> void:
 
 func _clear_choices_ui() -> void:
 	_choices.visible = false
+	choices_panel.visible = false
 	for c in _choices.get_children():
 		c.queue_free()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not _open:
 		return
-	if _choices.visible:
-		return  # ignore E while choosing; player clicks a button instead
+	# while choices are visible, ignore E so the player chooses with buttons
+	if choices_panel.visible or _choices.visible:
+		return
 	if _just_opened:
 		_just_opened = false
 		return
