@@ -10,6 +10,13 @@ extends Node3D
 @export var voice_pitch_max: float = 1.05
 @export var voice_blip_every: int = 2
 
+@export var choice_at_line_index: int = -1      # -1 = no choices; otherwise 0-based index in intro_lines (intro_line counts as index 0 if used)
+@export var choice_labels: Array[String] = []   # e.g. ["Yes", "No"] (2–3 items is fine)
+@export var followup_choice0: Array[String] = []  # lines to show if option 0 picked
+@export var followup_choice1: Array[String] = []  # lines to show if option 1 picked
+@export var followup_choice2: Array[String] = []  # optional third choice
+
+
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
 
@@ -53,10 +60,22 @@ func _start_talk() -> void:
 	for l in intro_lines:
 		lines.append(l)
 
+	# Set speaker name + voice
+	ui.set_speaker_name(display_name)
+	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
+
+	# If we want a choice after a specific line, show via the new API
+	if choice_at_line_index >= 0 and choice_labels.size() > 0:
+		if not ui.choice_selected.is_connected(_on_choice_selected):
+			ui.choice_selected.connect(_on_choice_selected, CONNECT_ONE_SHOT)
+		ui.show_lines_with_choice_at(lines, choice_at_line_index, choice_labels)
+	else:
+		ui.show_lines(lines)
+
+
 	# Set speaker name + voice, then show lines
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
-	ui.show_lines(lines)
 
 	if not ui.closed.is_connected(_on_ui_closed):
 		ui.closed.connect(_on_ui_closed)
@@ -74,3 +93,26 @@ func _find_dialogue_ui() -> Node:
 
 func _update_prompt() -> void:
 	_prompt.visible = _player_in_range and not _talking
+
+func _on_choice_selected(line_idx: int, choice_idx: int) -> void:
+	# Decide which follow-up to show
+	var follow: Array[String] = []
+	match choice_idx:
+		0:
+			follow = followup_choice0
+		1:
+			follow = followup_choice1
+		2:
+			follow = followup_choice2
+		_:
+			follow = []
+
+	var ui := _find_dialogue_ui()
+	if ui and follow.size() > 0:
+		ui.set_speaker_name(display_name)
+		ui.show_lines(follow)
+		# When follow-up closes, your existing ui.closed connection will fire and clear _talking
+	else:
+		# No follow-up: end the conversation now
+		_talking = false
+		_update_prompt()
