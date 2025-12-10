@@ -26,7 +26,7 @@ extends Node3D
 
 # --- Second question (Stage 3 -> 4 -> 5) ---
 @export var question2_lines: Array[String] = []
-@export var second_choice_first_visit_only: bool = false
+@export var second_choice_first_visit_only: bool = true
 @export var question2_choice_at_line_index: int = -1
 @export var question2_choice_labels: Array[String] = []
 @export var question2_followup_choice0: Array[String] = []
