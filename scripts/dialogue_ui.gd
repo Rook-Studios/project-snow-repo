@@ -5,7 +5,7 @@ signal closed
 signal choice_selected(line_index: int, choice_index: int)
 
 @onready var _panel: Panel = $Panel
-@onready var _line: Label = $Panel/MarginContainer/VBoxContainer/LineLabel
+@onready var _line: RichTextLabel = $Panel/MarginContainer/VBoxContainer/LineLabel
 @onready var _name: Label = $Panel/NamePanel/HBoxContainer/NameLabel
 @onready var _voice: AudioStreamPlayer = $VoicePlayer
 @onready var _choices: HBoxContainer = $Panel/ChoicesPanel/ChoicesBox
@@ -17,7 +17,7 @@ var _just_opened := false
 # --- Typewriter settings ---
 @export var chars_per_second: float = 40.0
 @export var blip_every_n_chars: int = 2
-@export var ignore_space_for_blip: bool = true
+@export var ignore_space_for_blip: bool = true  # (note: with BBCode we just do cadence; see comment below)
 
 # --- UX: fast-forward ---
 @export_category("UX")
@@ -30,8 +30,7 @@ var _fast_mode: bool = false
 var _lines: Array[String] = []
 var _idx: int = 0
 var _typing: bool = false
-var _full_text: String = ""
-var _typed_text: String = ""
+var _full_text_bbcode: String = ""
 var _char_accum: float = 0.0
 var _blip_counter: int = 0
 
@@ -48,8 +47,12 @@ var _choice_shown: bool = false
 
 func _ready() -> void:
 	_panel.visible = false
-	_choices.visible = false
 	choices_panel.visible = false
+	_choices.visible = false
+	# Ensure RichTextLabel is set up for formatting/word wrap
+	_line.bbcode_enabled = true
+	_line.autowrap_mode = TextServer.AUTOWRAP_WORD
+	_line.scroll_active = false
 	add_to_group("DialogueUI")
 
 # Public API
@@ -100,11 +103,12 @@ func hide_dialogue() -> void:
 func is_open() -> bool:
 	return _open
 
-# --- Typewriter core ---
-func _start_typing(text: String) -> void:
-	_full_text = text
-	_typed_text = ""
-	_line.text = ""
+# --- Typewriter core (RichTextLabel + visible_characters) ---
+func _start_typing(text_bbcode: String) -> void:
+	_full_text_bbcode = text_bbcode
+	_line.visible_characters = 0
+	_line.clear()
+	_line.append_text(_full_text_bbcode) # supports [b], [i], [color], etc.
 	_char_accum = 0.0
 	_blip_counter = 0
 	_typing = true
@@ -124,6 +128,7 @@ func _process(delta: float) -> void:
 	if not _typing:
 		return
 
+	# pick cps based on fast mode
 	var cps := fast_mode_chars_per_second if _fast_mode else chars_per_second
 
 	_char_accum += cps * delta
@@ -132,24 +137,25 @@ func _process(delta: float) -> void:
 		return
 	_char_accum -= float(chars_to_add)
 
-	var start_idx := _typed_text.length()
-	var end_idx = min(start_idx + chars_to_add, _full_text.length())
-	_typed_text = _full_text.substr(0, end_idx)
-	_line.text = _typed_text
+	var prev_visible := _line.visible_characters
+	var total := _line.get_total_character_count()  # excludes BBCode tags
+	var new_visible = min(prev_visible + chars_to_add, total)
+	_line.visible_characters = new_visible
 
-	# blips for new characters
-	for i in range(start_idx, end_idx):
-		var c := _full_text[i]
-		if ignore_space_for_blip and (c == " " or c == "\n" or c == "." or c == "," or c == "!" or c == "?"):
-			continue
-		_blip_counter += 1
-		if _voice_enabled and (_blip_counter % _voice_blip_every == 0):
-			_voice.pitch_scale = randf_range(_pitch_min, _pitch_max)
-			_voice.play()
+	# Voice blips cadence based on added visible chars
+	# Note: Ignoring spaces with BBCode is non-trivial; we use cadence here.
+	var added = new_visible - prev_visible
+	if added > 0 and _voice_enabled:
+		for i in range(added):
+			_blip_counter += 1
+			if (_blip_counter % _voice_blip_every) == 0:
+				_voice.pitch_scale = randf_range(_pitch_min, _pitch_max)
+				_voice.play()
 
-	if _typed_text == _full_text:
+	# Finished this line?
+	if new_visible >= total:
 		_typing = false
-		# if we just finished a line in fast mode, auto-advance right away (choices will still interrupt correctly)
+		# auto-advance if fast mode is still held (choices will pause progression)
 		if _fast_mode and fast_mode_auto_advance and not choices_panel.visible and not _choices.visible:
 			_advance_or_close()
 
@@ -159,8 +165,8 @@ func _advance_or_close() -> void:
 		return
 
 	if _typing:
-		_typed_text = _full_text
-		_line.text = _full_text
+		# snap to end of current line
+		_line.visible_characters = _line.get_total_character_count()
 		_typing = false
 		return
 
@@ -188,8 +194,8 @@ func _show_choices_for_current_line() -> void:
 	for i in range(_pending_choices.size()):
 		var b := Button.new()
 		b.text = _pending_choices[i]
-		var idx := i
 		b.focus_mode = Control.FOCUS_ALL
+		var idx := i
 		b.pressed.connect(func():
 			_choices.visible = false
 			choices_panel.visible = false

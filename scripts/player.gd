@@ -282,7 +282,7 @@ func _on_dialogue_opened() -> void:
 
 func _on_dialogue_closed() -> void:
 	set_controls_enabled(true)
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 
 func set_controls_enabled(enabled: bool) -> void:
 	controls_enabled = enabled

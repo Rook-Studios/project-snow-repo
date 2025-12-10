@@ -37,11 +37,13 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
 layout_mode = 2
 
-[node name="LineLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="LineLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
+clip_contents = false
 custom_minimum_size = Vector2(1024, 0)
 layout_mode = 2
-text = "dialgoue goes here"
-autowrap_mode = 3
+bbcode_enabled = true
+text = "dialogue goes here"
+fit_content = true
 
 [node name="NamePanel" type="Panel" parent="Panel"]
 custom_minimum_size = Vector2(256, 0)
