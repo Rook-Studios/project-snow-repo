@@ -50,6 +50,7 @@ func _fire() -> void:
 			QuestManager.advance(quest_name)
 		Action.Complete:
 			QuestManager.complete(quest_name)
+			
 
 	_fired = true
 

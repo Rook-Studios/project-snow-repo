@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://dypvg8e8j1ci8"]
+
+[ext_resource type="Script" path="res://scripts/journal_ui.gd" id="1_hn1e3"]
+
+[node name="JournalUI" type="CanvasLayer"]
+script = ExtResource("1_hn1e3")
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = 30.0
+offset_top = 27.0
+offset_right = 588.0
+offset_bottom = 698.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="ActiveLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[b]Active[/b]"
+fit_content = true
+
+[node name="ActiveList" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/MarginContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="CompletedLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[b]Completed[/b]"
+fit_content = true
+
+[node name="CompletedList" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
