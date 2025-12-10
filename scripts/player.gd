@@ -210,6 +210,11 @@ func _physics_process(delta: float) -> void:
 
 	# 6) Camera bobbing
 	_apply_camera_bob(delta)
+	
+	# 7) Quest Checking
+	if Input.is_action_just_pressed("check"):
+		print(QuestManager.quests)  # see states/logs
+
 
 func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
 	# Optional per-area override of zoom speed

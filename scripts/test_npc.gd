@@ -1,5 +1,9 @@
 extends Node3D
 
+signal talk_started
+signal choice_made(line_index: int, choice_index: int)
+signal talk_finished
+
 @export var display_name: String = "Villager"
 @export_multiline var intro_line: String = "Morning! Lovely winter day, isn't it?"
 @export var intro_lines: Array[String] = []
@@ -81,6 +85,7 @@ func _start_talk() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 	_talking = true
+	talk_started.emit()
 	_stage = 0
 	_last_choice_idx = -1
 	_update_prompt()
@@ -141,6 +146,8 @@ func _is_exhausted_visit() -> bool:
 
 # Choice handlers
 func _on_choice_selected_stage0(line_idx: int, choice_idx: int) -> void:
+	choice_made.emit(line_idx, choice_idx)
+
 	_last_choice_idx = choice_idx
 	_stage = 1
 	var ui := _find_dialogue_ui()
@@ -163,6 +170,8 @@ func _on_choice_selected_stage0(line_idx: int, choice_idx: int) -> void:
 		_show_shared_tail_or_advance_to_question2()
 
 func _on_choice_selected_stage2(line_idx: int, choice_idx: int) -> void:
+	choice_made.emit(line_idx, choice_idx)
+
 	_last_choice_idx = choice_idx
 	_stage = 4
 	var ui := _find_dialogue_ui()
@@ -271,6 +280,9 @@ func _finish_conversation() -> void:
 	var ui := _find_dialogue_ui()
 	if ui and ui.closed.is_connected(_on_ui_closed):
 		ui.closed.disconnect(_on_ui_closed)
+	
+	talk_finished.emit()
+
 
 # Helpers
 func _find_dialogue_ui() -> Node:
