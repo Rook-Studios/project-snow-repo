@@ -1,9 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=16 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
+[ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/npc_generic.tscn" id="5_hph5f"]
+[ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="5_kgffw"]
+[ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="6_iitjw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -21,6 +24,48 @@ sky = SubResource("Sky_h6w6j")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fcwaw"]
 size = Vector3(1, 0.0372925, 1)
+
+[sub_resource type="Resource" id="Resource_7yfki"]
+script = ExtResource("6_iitjw")
+lines = Array[String](["this is the first line (0) in the first block (0)", "this is the second line (1) in the first block (0)", "this is the third line (2) in the first block (0), where i will now give you a [b]choice[/b]. choose wisely."])
+choice_line_index = 2
+choice_labels = Array[String](["choice 0", "choice 1", "choice 2"])
+followup_choice0 = Array[String](["ah, choice 0. a simple but good choice."])
+followup_choice1 = Array[String](["ah, choice 1, the real chooser's choice when it comes to choices."])
+followup_choice2 = Array[String](["ahah, choice 2. my personal favourite of all the choices."])
+tail_lines = Array[String](["well, it has been fun choosing with you. I hope you enjoyed your choice, and I hope to speak to you again soon. [i]Goodbye.[/i]"])
+show_on_first_visit = true
+show_on_repeat_visits = false
+play_once = false
+block_id = &""
+
+[sub_resource type="Resource" id="Resource_atm2l"]
+script = ExtResource("6_iitjw")
+lines = Array[String](["this is my second dialogue block, it should only play after you have spoken to me once and seen the end of my first block.", "hopefully this will play the second time ONLY, and not after."])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = false
+show_on_repeat_visits = true
+play_once = true
+block_id = &""
+
+[sub_resource type="Resource" id="Resource_xkrhr"]
+script = ExtResource("6_iitjw")
+lines = Array[String](["this is the end of the second block, OR the entire third block if you have spoken to me enough times."])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = false
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
 
 [node name="test-scene" type="Node3D"]
 
@@ -56,3 +101,14 @@ exit_zoom_lerp_speed = 1.0
 fast_mode_chars_per_second = 500.0
 
 [node name="JournalUI" parent="." instance=ExtResource("4_o0qvk")]
+
+[node name="NPC_Generic" parent="." instance=ExtResource("5_hph5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.139751, 1.56536, -6.843)
+display_name = "Dude Guy"
+first_visit_intro = Array[String](["Hello i am [color=black][b][wave]NPC MAN[/wave][/b][/color], this is your first time talking to me."])
+repeat_intro = Array[String](["Hello i am [color=black][b][wave]NPC MAN[/wave][/b][/color], this is [b][bgcolor=red]NOT[/bgcolor][/b] your first time talking to me."])
+blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_7yfki"), SubResource("Resource_atm2l"), SubResource("Resource_xkrhr")])
+voice_stream = ExtResource("5_kgffw")
+voice_pitch_min = 0.8
+voice_pitch_max = 1.2
+voice_blip_every = 5
