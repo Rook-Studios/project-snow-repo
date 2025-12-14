@@ -28,6 +28,13 @@ signal talk_finished
 @export var followup_choice2: Array[String] = []
 @export var shared_tail_lines: Array[String] = []
 
+# --- NEW: First question prereqs / UX ---
+@export var first_choice_require_flags_true: Array[StringName] = []
+@export var first_choice_require_completed: Array[StringName] = []
+@export var first_choice_locked_lines: Array[String] = []  # shown if prereqs NOT met
+@export var first_choice_persistent_until_started: bool = false
+@export var first_choice_quest_name: StringName = StringName()  # which quest counts as “started”
+
 # --- Second question (Stage 3 -> 4 -> 5) ---
 @export var question2_lines: Array[String] = []
 @export var second_choice_first_visit_only: bool = true
@@ -50,7 +57,7 @@ var _times_spoken: int = 0
 # Per-talk gate for the second question block
 var _allow_question2: bool = false
 
-# NEW: remember/restore mouse mode across the whole conversation
+# remember/restore mouse mode across the conversation
 var _prev_mouse_mode := Input.get_mouse_mode()
 
 func _ready() -> void:
@@ -74,13 +81,39 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact") and not _talking:
 		_start_talk()
 
+
+# --- helpers ---
+func _build_first_visit_lines() -> Array[String]:
+	var lines: Array[String] = []
+	if intro_line.strip_edges() != "":
+		lines.append(intro_line)
+	for l in intro_lines:
+		lines.append(l)
+	return lines
+
+func _quest_started_or_done(qname: StringName) -> bool:
+	if qname == StringName():
+		return false
+	return QuestManager.is_active(qname) or QuestManager.is_completed(qname)
+
+func _meets_first_prereqs() -> bool:
+	# Optional: you may have exported arrays like first_choice_require_flags_true/completed.
+	# If you aren't using them yet, simply return true here.
+	# If you DO have them, uncomment these lines and add the two export arrays at the top.
+	# for f in first_choice_require_flags_true:
+	# 	if not Flags.is_true(f): return false
+	# for q in first_choice_require_completed:
+	# 	if not QuestManager.is_completed(q): return false
+	return true
+
+
+# --- start (replace your _start_talk with this) ---
 func _start_talk() -> void:
 	var ui := _find_dialogue_ui()
 	if ui == null:
 		push_warning("DialogueUI not found in scene.")
 		return
 
-	# --- mouse: make visible for the entire conversation, and restore later ---
 	_prev_mouse_mode = Input.get_mouse_mode()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
@@ -93,30 +126,49 @@ func _start_talk() -> void:
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
 
-	# Pick opening lines based on visit count
-	var lines := _pick_opening_lines()
-	if lines.is_empty():
-		_finish_conversation()
-		return
-
+	# Always connect close handler BEFORE showing any lines
 	if not ui.closed.is_connected(_on_ui_closed):
 		ui.closed.connect(_on_ui_closed)
 
-	# Compute per-talk allowance for the second block
+	# --- decide opening lines & whether we can offer the first choice ---
+	var prereqs_ok := _meets_first_prereqs()
+	var quest_not_started := false
+	# If you’re using first_choice_quest_name + persistence, compute this:
+	# quest_not_started = (first_choice_quest_name != StringName()) and (not _quest_started_or_done(first_choice_quest_name))
+
+	# If you keep “locked” lines, choose them when prereqs aren’t met; otherwise use normal openings.
+	var opening_lines := _pick_opening_lines()
+	# Optionally, if you have locked lines exposed:
+	# if not prereqs_ok and first_choice_locked_lines.size() > 0:
+	# 	opening_lines = first_choice_locked_lines.duplicate()
+
+	if opening_lines.is_empty():
+		_finish_conversation()
+		return
+
+	# Compute if we’re allowed to show the FIRST choice this talk.
+	# NOTE: If you use “first visit only” and want persistence, add that here.
+	var first_choice_allowed_by_visit := (not first_choice_first_visit_only) or (_times_spoken == 0)
+	var have_choice_data := (choice_at_line_index >= 0 and choice_labels.size() > 0)
+	var can_offer_choice := prereqs_ok and have_choice_data and first_choice_allowed_by_visit
+	# If you want persistence (ask again even after first visit), loosen to:
+	# var persistent_override := first_choice_persistent_until_started and quest_not_started
+	# var can_offer_choice := prereqs_ok and have_choice_data and (first_choice_allowed_by_visit or persistent_override)
+
+	# Per-talk allowance for Q2 (unchanged)
 	var exhausted_visit := _is_exhausted_visit()
 	_allow_question2 = (not exhausted_visit) and ((not second_choice_first_visit_only) or (_times_spoken == 0))
 
-	# Gate the first choice to first visit if desired
-	var first_choice_allowed := (not first_choice_first_visit_only) or (_times_spoken == 0)
-
-	if not exhausted_visit and first_choice_allowed and choice_at_line_index >= 0 and choice_labels.size() > 0:
+	# Show lines (with or without scheduling a choice). NO early returns afterward.
+	if not exhausted_visit and can_offer_choice:
 		if not ui.choice_selected.is_connected(_on_choice_selected_stage0):
 			ui.choice_selected.connect(_on_choice_selected_stage0, CONNECT_ONE_SHOT)
-		ui.show_lines_with_choice_at(lines, choice_at_line_index, choice_labels)
+		ui.show_lines_with_choice_at(opening_lines, choice_at_line_index, choice_labels)
 	else:
-		ui.show_lines(lines)
+		ui.show_lines(opening_lines)
 
 	get_viewport().set_input_as_handled()
+
 
 # Visit-based opening selection
 func _pick_opening_lines() -> Array[String]:
@@ -242,10 +294,11 @@ func _start_question2() -> void:
 	if ui == null:
 		_finish_conversation()
 		return
-	if not _allow_question2 or question2_lines.is_empty():
+	if question2_lines.is_empty():
 		_finish_conversation()
 		return
 
+	# NOTE: you can mirror the same prereq/persistence pattern for question2 if you want.
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
 
@@ -273,16 +326,13 @@ func _finish_conversation() -> void:
 	_talking = false
 	_update_prompt()
 	_times_spoken += 1
-
-	# --- mouse: restore whatever mode we had before the talk started ---
 	Input.set_mouse_mode(_prev_mouse_mode)
 
 	var ui := _find_dialogue_ui()
 	if ui and ui.closed.is_connected(_on_ui_closed):
 		ui.closed.disconnect(_on_ui_closed)
-	
-	talk_finished.emit()
 
+	talk_finished.emit()
 
 # Helpers
 func _find_dialogue_ui() -> Node:
