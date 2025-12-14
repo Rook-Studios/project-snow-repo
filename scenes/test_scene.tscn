@@ -128,10 +128,6 @@ choice_labels = Array[String](["Yes Quest", "No Quest"])
 followup_choice0 = Array[String](["Great! Here is your quest. go to the quest advancer to advance it."])
 followup_choice1 = Array[String](["aw too bad. no quest for you :("])
 shared_tail_lines = Array[String](["goodbye young quester."])
-first_choice_require_flags_true = Array[StringName]([&"visited_area"])
-first_choice_locked_lines = Array[String](["Hello there, i am the quest giver. It appears you have not visited the test area that activates this quest, please go there to unlock this quest."])
-first_choice_persistent_until_started = true
-first_choice_quest_name = &"test_quest"
 
 [node name="QuestTrigger" type="Node" parent="QuestGiver"]
 script = ExtResource("6_fhoth")
