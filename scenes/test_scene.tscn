@@ -1,14 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=10 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
-[ext_resource type="Script" path="res://scripts/VisitFlagArea.gd" id="3_iqpyq"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
-[ext_resource type="PackedScene" uid="uid://ces7xxkebuaew" path="res://scenes/test_npc.tscn" id="4_uxi6s"]
-[ext_resource type="PackedScene" uid="uid://c8ckrs8sf4f8c" path="res://scenes/quest_feedback.tscn" id="5_b2uwn"]
-[ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="5_kgffw"]
-[ext_resource type="Script" path="res://scripts/QuestTrigger.gd" id="6_fhoth"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -57,123 +52,7 @@ target_arm_length = 10.0
 zoom_lerp_speed = 1.0
 exit_zoom_lerp_speed = 1.0
 
-[node name="CameraZoomArea2" parent="." instance=ExtResource("2_2osio")]
-transform = Transform3D(2.53679, 0, 0, 0, 2.53679, 0, 0, 0, 2.53679, -3.84312, 1.56995, -6.32634)
-
-[node name="VisitFlagArea" type="Node" parent="CameraZoomArea2"]
-script = ExtResource("3_iqpyq")
-flag_name = &"visited_area"
-area_path = NodePath("..")
-chime = ExtResource("5_kgffw")
-
 [node name="DialogueUI" parent="." instance=ExtResource("3_06gvr")]
 fast_mode_chars_per_second = 500.0
 
 [node name="JournalUI" parent="." instance=ExtResource("4_o0qvk")]
-
-[node name="QuestFeedback" parent="." instance=ExtResource("5_b2uwn")]
-fade_in_time = 1.0
-hold_time = 3.0
-fade_out_time = 1.0
-use_slide = true
-slide_pixels = -48.0
-
-[node name="TestNPC" parent="." instance=ExtResource("4_uxi6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.30987, 1.64359, 5.24249)
-intro_line = "hello i am villager number one, i hope you  enjoy this liminal plane hello i am villager number one, i hope you  enjoy this liminal plane hello i am villager number one, i hope you  enjoy this liminal plane hello i am villager number one, i hope you  enjoy this liminal plane hello i am villager number one, i hope you  enjoy this liminal plane hello i am villager number one, i hope you  enjoy this liminal plane hello i am villager number one, i hope you  enjoy this liminal plane"
-exhausted_lines = Array[String](["[b][color=blue][outline_color=white][outline_size=8]goodbye.[/outline_size][/outline_color][/color][/b]", "[b][color=blue][outline_color=white][outline_size=8]for real for real.[/outline_size][/outline_color][/color][/b]"])
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.9
-voice_pitch_max = 1.1
-voice_blip_every = 3
-choice_at_line_index = 0
-choice_labels = Array[String](["Nice Day!", "Bad Day!"])
-followup_choice0 = Array[String](["Thanks guy!", "you too!"])
-followup_choice1 = Array[String](["fuck you guy!"])
-shared_tail_lines = Array[String](["goodbye!"])
-question2_lines = Array[String](["this is a second question, hopefullt this one appears after i said goodbye for no reason"])
-question2_choice_at_line_index = 0
-question2_choice_labels = Array[String](["goodbye to you too", "still fuck you"])
-question2_followup_choice0 = Array[String](["thanks buddy guy old pal"])
-question2_followup_choice1 = Array[String](["ok damn you rude asf that shit hurted my feelings fr fr"])
-final_tail_lines = Array[String](["i am ending this convo now, goodbye for real"])
-
-[node name="TestNPC2" parent="." instance=ExtResource("4_uxi6s")]
-transform = Transform3D(0.688962, 0, -0.724797, 0, 1, 0, 0.724797, 0, 0.688962, 2.17354, 1.64359, -3.92139)
-intro_line = "hello i am villager number [color=red][wave]two[/wave][/color]"
-intro_lines = Array[String](["hopefully this works with multiple guys"])
-second_visit_intro_lines = Array[String](["[b]this is the second time you are speaking to me[/b]", "goodbye for the second time!"])
-third_visit_intro_lines = Array[String](["[i]this is the third time speaking to me[/i]", "don't you have anything better to do?"])
-exhausted_lines = Array[String](["[color=purple][wave]I am done talking to you now. goodbye[/wave][/color]"])
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.33
-voice_pitch_max = 1.66
-voice_blip_every = 7
-choice_at_line_index = 1
-choice_labels = Array[String](["It does! have a good day :)"])
-followup_choice0 = Array[String](["thanks!", "go check out that other guy, he might have more dialogue choices for you."])
-
-[node name="QuestGiver" parent="." instance=ExtResource("4_uxi6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.62016, 1.63876, 5.91454)
-display_name = "Quest Giver"
-intro_line = "hello, i am the quest giver"
-intro_lines = Array[String](["would you like a quest? say yes for yes and no for no."])
-exhausted_lines = Array[String](["remember, go to the quest advancer to advamce your quest!"])
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.6
-voice_pitch_max = 0.7
-voice_blip_every = 4
-choice_at_line_index = 1
-choice_labels = Array[String](["Yes Quest", "No Quest"])
-followup_choice0 = Array[String](["Great! Here is your quest. go to the quest advancer to advance it."])
-followup_choice1 = Array[String](["aw too bad. no quest for you :("])
-shared_tail_lines = Array[String](["goodbye young quester."])
-
-[node name="QuestTrigger" type="Node" parent="QuestGiver"]
-script = ExtResource("6_fhoth")
-quest_name = &"test_quest"
-trigger = 2
-line_index_filter = 1
-quest_title = "Test Quest"
-quest_steps = Array[String](["Talk to Quest Advancer", "Talk to Quest Completer", "Quest Complete!"])
-require_flags_true = Array[StringName]([&"visited_area"])
-
-[node name="QuestAdvancer" parent="." instance=ExtResource("4_uxi6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4291, 1.63876, 5.91454)
-display_name = "Quest Advancer"
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.6
-voice_pitch_max = 0.7
-voice_blip_every = 4
-
-[node name="QuestTrigger" type="Node" parent="QuestAdvancer"]
-script = ExtResource("6_fhoth")
-quest_name = &"test_quest"
-action = 1
-trigger = 5
-quest_title = "Test Quest"
-quest_steps = Array[String](["Talk to Quest Advancer", "Talk to Quest Completer", "Talk to Quest Complete!"])
-require_flags_true = Array[StringName]([&"visited_area"])
-
-[node name="QuestCompleter" parent="." instance=ExtResource("4_uxi6s")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.34178, 1.63876, 5.91454)
-display_name = "Quest Completer"
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.6
-voice_pitch_max = 0.7
-voice_blip_every = 4
-
-[node name="QuestTrigger" type="Node" parent="QuestCompleter"]
-script = ExtResource("6_fhoth")
-quest_name = &"test_quest"
-action = 1
-quest_title = "Test Quest"
-quest_steps = Array[String](["Talk to Quest Advancer", "Talk to Quest Completer", "Talk to Quest Complete!"])
-
-[node name="QuestTrigger2" type="Node" parent="QuestCompleter"]
-script = ExtResource("6_fhoth")
-quest_name = &"test_quest"
-action = 2
-trigger = 5
-quest_title = "Test Quest"
-quest_steps = Array[String](["Talk to Quest Advancer", "Talk to Quest Completer", "Talk to Quest Complete!"])
