@@ -18,6 +18,7 @@ config/icon="res://assets/test-assets/icon.svg"
 [autoload]
 
 QuestManager="*res://scripts/QuestManager.gd"
+Flags="*res://scripts/flags.gd"
 
 [display]
 
@@ -36,6 +37,7 @@ folder_colors={
 [global_group]
 
 DialogueUI=""
+Player=""
 
 [input]
 

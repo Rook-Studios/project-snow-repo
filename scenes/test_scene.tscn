@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=15 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
+[ext_resource type="Script" path="res://scripts/VisitFlagArea.gd" id="3_iqpyq"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
 [ext_resource type="PackedScene" uid="uid://ces7xxkebuaew" path="res://scenes/test_npc.tscn" id="4_uxi6s"]
 [ext_resource type="PackedScene" uid="uid://c8ckrs8sf4f8c" path="res://scenes/quest_feedback.tscn" id="5_b2uwn"]
@@ -55,6 +56,15 @@ transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 7.81221, 2.35321, 0)
 target_arm_length = 10.0
 zoom_lerp_speed = 1.0
 exit_zoom_lerp_speed = 1.0
+
+[node name="CameraZoomArea2" parent="." instance=ExtResource("2_2osio")]
+transform = Transform3D(2.53679, 0, 0, 0, 2.53679, 0, 0, 0, 2.53679, -3.84312, 1.56995, -6.32634)
+
+[node name="VisitFlagArea" type="Node" parent="CameraZoomArea2"]
+script = ExtResource("3_iqpyq")
+flag_name = &"visited_area"
+area_path = NodePath("..")
+chime = ExtResource("5_kgffw")
 
 [node name="DialogueUI" parent="." instance=ExtResource("3_06gvr")]
 fast_mode_chars_per_second = 500.0
@@ -126,6 +136,7 @@ trigger = 2
 line_index_filter = 1
 quest_title = "Test Quest"
 quest_steps = Array[String](["Talk to Quest Advancer", "Talk to Quest Completer", "Quest Complete!"])
+require_flags_true = Array[StringName]([&"visited_area"])
 
 [node name="QuestAdvancer" parent="." instance=ExtResource("4_uxi6s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4291, 1.63876, 5.91454)
@@ -142,6 +153,7 @@ action = 1
 trigger = 5
 quest_title = "Test Quest"
 quest_steps = Array[String](["Talk to Quest Advancer", "Talk to Quest Completer", "Talk to Quest Complete!"])
+require_flags_true = Array[StringName]([&"visited_area"])
 
 [node name="QuestCompleter" parent="." instance=ExtResource("4_uxi6s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.34178, 1.63876, 5.91454)

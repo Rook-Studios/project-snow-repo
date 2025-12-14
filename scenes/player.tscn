@@ -6,7 +6,7 @@
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_pmn0q"]
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" groups=["Player"]]
 floor_max_angle = 0.802851
 floor_snap_length = 0.2
 script = ExtResource("1_h1snv")
