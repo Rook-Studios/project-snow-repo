@@ -14,7 +14,7 @@ signal talk_finished
 
 @export_group("Dialogue Blocks")
 @export var blocks: Array[DialogueBlock] = []                 # base set (used on first visit and by default)
-@export var repeat_blocks_override: Array[DialogueBlock] = [] # NEW: if non-empty, use these on repeats
+@export var repeat_blocks_override: Array[DialogueBlock] = [] # if non-empty, use these on repeats
 
 @export_group("Voice Blips")
 @export var voice_stream: AudioStream
@@ -29,6 +29,7 @@ signal talk_finished
 @onready var _prompt: Label3D = $Prompt3D
 
 var _player_in := false
+var _player_body: CharacterBody3D = null # NEW: track player for grounded checks
 var _talking := false
 var _times_spoken := 0
 
@@ -36,10 +37,10 @@ var _times_spoken := 0
 var _block_idx := -1
 var _choice_picked := -1
 
-# NEW: the per-conversation list we’ll walk after filtering
+# the per-conversation list we’ll walk after filtering
 var _talk_blocks: Array[DialogueBlock] = []
 
-# NEW: memory for play_once blocks this session
+# memory for play_once blocks this session
 var _played_once: Dictionary = {}  # key:StringName -> true
 
 
@@ -49,28 +50,40 @@ func _ready() -> void:
 	if _zone:
 		_zone.body_entered.connect(func(b):
 			if b is CharacterBody3D:
+				_player_body = b
 				_player_in = true
 				_update_prompt())
 		_zone.body_exited.connect(func(b):
+			if b == _player_body:
+				_player_body = null
 			if b is CharacterBody3D:
 				_player_in = false
 				_update_prompt())
 
 func _unhandled_input(e: InputEvent) -> void:
 	if _player_in and not _talking and e.is_action_pressed("interact"):
-		_start_conversation()
+		# NEW: only allow talking while grounded
+		if _player_body != null and _player_body.is_on_floor():
+			_start_conversation()
+
+func _process(_delta: float) -> void:
+	# If the player entered while airborne, show the prompt once they land (and hide it again if they jump)
+	if _player_in and not _talking:
+		_update_prompt()
 
 func _start_conversation() -> void:
 	var ui := _ui()
-	if ui == null: return
+	if ui == null:
+		return
 
 	_talking = true
 	choice_reset()
+	_update_prompt()
 
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
 
-	# NEW: decide which block list we’ll use THIS talk
+	# decide which block list we’ll use THIS talk
 	_talk_blocks = _get_blocks_for_this_talk()
 
 	# show visit-specific intro
@@ -98,7 +111,8 @@ func _next_block_or_finish() -> void:
 		return
 
 	var ui := _ui()
-	if ui == null: return
+	if ui == null:
+		return
 
 	ui.set_speaker_name(display_name)
 
@@ -122,7 +136,8 @@ func _on_choice_selected_block(_line_idx: int, _choice_idx: int) -> void:
 	_choice_picked = _choice_idx
 	var blk := _talk_blocks[_block_idx]
 	var ui := _ui()
-	if ui == null: return
+	if ui == null:
+		return
 
 	var follow: Array[String] = []
 	match _choice_idx:
@@ -141,7 +156,8 @@ func _on_choice_selected_block(_line_idx: int, _choice_idx: int) -> void:
 func _show_tail_then_continue() -> void:
 	var blk := _talk_blocks[_block_idx]
 	var ui := _ui()
-	if ui == null: return
+	if ui == null:
+		return
 
 	# mark play_once blocks as consumed (so future talks will skip them)
 	_mark_played_if_once(blk)
@@ -159,7 +175,7 @@ func _end_conversation() -> void:
 	_update_prompt()
 	talk_finished.emit()
 
-# --- NEW: block selection + tracking ---
+# --- block selection + tracking ---
 
 func _get_blocks_for_this_talk() -> Array[DialogueBlock]:
 	var source: Array[DialogueBlock] = []
@@ -185,7 +201,6 @@ func _get_blocks_for_this_talk() -> Array[DialogueBlock]:
 			continue
 		filtered.append(blk)
 	return filtered
-
 
 func _block_key(blk: DialogueBlock) -> StringName:
 	if blk.block_id != StringName():
@@ -213,17 +228,21 @@ func _ui() -> Node:
 	return null
 
 func _update_prompt() -> void:
-	_prompt.visible = _player_in and not _talking
+	# NEW: hide prompt if player is airborne
+	var grounded := (_player_body != null and _player_body.is_on_floor())
+	_prompt.visible = _player_in and grounded and not _talking
 
 func _connect_closed_once(fn: Callable) -> void:
 	var ui := _ui()
-	if ui == null: return
+	if ui == null:
+		return
 	if not ui.closed.is_connected(fn):
 		ui.closed.connect(fn, CONNECT_ONE_SHOT)
 
 func _connect_choice_once(fn: Callable) -> void:
 	var ui := _ui()
-	if ui == null: return
+	if ui == null:
+		return
 	if not ui.choice_selected.is_connected(fn):
 		ui.choice_selected.connect(fn, CONNECT_ONE_SHOT)
 

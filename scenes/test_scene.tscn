@@ -89,6 +89,8 @@ shape = SubResource("BoxShape3D_fcwaw")
 
 [node name="Player" parent="." instance=ExtResource("1_p2yof")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.15076, 2.28361, -1.4375)
+controller_look_accel = 14.0
+controller_look_decel = 12.0
 camera_bob_frequency = 12.0
 
 [node name="CameraZoomArea" parent="." instance=ExtResource("2_2osio")]

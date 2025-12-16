@@ -39,6 +39,16 @@ extends CharacterBody3D
 @export var max_arm_length: float = 100.0
 @export var arm_lerp_speed: float = 5.0   # how fast the camera moves to the target
 
+## --- Controller Look ---
+@export_category("Controller Look")
+@export var controller_look_enabled: bool = true
+@export var controller_look_sensitivity: float = 2.2   # radians per second at full stick
+@export var controller_look_deadzone: float = 0.15
+@export var controller_invert_y: bool = false
+@export var controller_look_accel: float = 18.0   # how quickly it ramps up to stick input
+@export var controller_look_decel: float = 14.0   # how quickly it eases to a stop when released
+
+
 ## --- Camera Bob ---
 @export_category("Camera Bob")
 @export var camera_bob_enabled: bool = true
@@ -51,7 +61,9 @@ extends CharacterBody3D
 
 @export var controls_enabled: bool = true
 
-
+## --- Input Buffers ---
+@export_category("Input Buffers")
+@export var jump_lock_after_dialogue: float = 0.15  # seconds
 
 ## --- Optional external orientation (will auto-use Pivot if empty) ---
 @export_category("Orientation")
@@ -71,6 +83,9 @@ var _pivot_base_y: float
 var _pivot_base_x: float
 var _default_arm_length: float = 0.0   # NEW: remember default zoom
 
+var _look_vel := Vector2.ZERO  # radians/sec (x = yaw speed, y = pitch speed)
+var _using_controller: bool = false
+var _jump_lock_timer: float = 0.0
 
 
 
@@ -113,6 +128,11 @@ func _ready() -> void:
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		_using_controller = true
+	elif event is InputEventMouseMotion or event is InputEventMouseButton or event is InputEventKey:
+		_using_controller = false
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not controls_enabled:
@@ -155,9 +175,23 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var g: float = (ProjectSettings.get_setting("physics/3d/default_gravity") as float) * gravity_scale
-
-	# 1) Input direction, camera-relative if _orient_ref set
+	
+	if _jump_lock_timer > 0.0:
+		_jump_lock_timer = max(_jump_lock_timer - delta, 0.0)
+	
+	# 1) Input direction (and analog strength), camera-relative if _orient_ref set
 	var input_vec := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var input_strength = clamp(input_vec.length(), 0.0, 1.0) # 0..1 (analog), ~1 for keyboard
+
+	# Optional: prevent tiny stick drift (feel free to tune/remove)
+	var move_deadzone := 0.15
+	if input_strength < move_deadzone:
+		input_vec = Vector2.ZERO
+		input_strength = 0.0
+	else:
+		# Rescale so it still reaches 1.0 after deadzone
+		input_strength = (input_strength - move_deadzone) / max(1.0 - move_deadzone, 0.001)
+
 	var move_dir := Vector3.ZERO
 	if _orient_ref:
 		var f := _orient_ref.global_transform.basis.z
@@ -166,13 +200,17 @@ func _physics_process(delta: float) -> void:
 		r.y = 0
 		f = f.normalized()
 		r = r.normalized()
-		move_dir = (f * input_vec.y + r * input_vec.x).normalized()
-	else:
-		move_dir = Vector3(input_vec.x, 0, input_vec.y).normalized()
 
-	# 2) Horizontal velocity lerp
-	var target_speed := walk_speed
-	var desired_vxz := move_dir * target_speed
+		var dir3 := (f * input_vec.y + r * input_vec.x)
+		move_dir = dir3.normalized() if dir3.length() > 0.001 else Vector3.ZERO
+	else:
+		var dir3 := Vector3(input_vec.x, 0.0, input_vec.y)
+		move_dir = dir3.normalized() if dir3.length() > 0.001 else Vector3.ZERO
+
+	# 2) Horizontal velocity lerp (scale speed by analog strength)
+	var target_speed := walk_speed  # (you can swap to sprint_speed if you later add sprint on controller)
+	var desired_vxz = move_dir * (target_speed * input_strength)
+
 	var current_vxz := Vector2(velocity.x, velocity.z)
 	var desired_vxz2 := Vector2(desired_vxz.x, desired_vxz.z)
 	var accel := acceleration if is_on_floor() else air_acceleration
@@ -180,11 +218,13 @@ func _physics_process(delta: float) -> void:
 	velocity.x = current_vxz.x
 	velocity.z = current_vxz.y
 
+
 	# 3) Gravity + jump (variable height)
 	if is_on_floor():
 		velocity.y = min(velocity.y, 0.0)
-		if Input.is_action_just_pressed("jump"):
+		if _jump_lock_timer <= 0.0 and Input.is_action_just_pressed("jump"):
 			velocity.y = _jump_velocity(g)
+
 	else:
 		if velocity.y > 0.0:
 			# Rising
@@ -214,6 +254,9 @@ func _physics_process(delta: float) -> void:
 	# 7) Quest Checking
 	if Input.is_action_just_pressed("check"):
 		print(QuestManager.quests)  # see states/logs
+		
+	# 8) Controller input searching
+	_apply_controller_look(delta)
 
 
 func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
@@ -283,13 +326,64 @@ func _jump_velocity(gravity: float) -> float:
 
 func _on_dialogue_opened() -> void:
 	set_controls_enabled(false)
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if _using_controller:
+		# keep cursor out of sight on controller
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	else:
+		# mouse users can click choices
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
 
 func _on_dialogue_closed() -> void:
 	set_controls_enabled(true)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	_jump_lock_timer = jump_lock_after_dialogue
+
 
 func set_controls_enabled(enabled: bool) -> void:
 	controls_enabled = enabled
 	if not enabled:
 		velocity = Vector3.ZERO   # kill momentum immediately
+
+func _apply_controller_look(delta: float) -> void:
+	if not controller_look_enabled:
+		return
+
+	# Right stick as a vector from actions
+	var look_vec := Input.get_vector("look_left", "look_right", "look_up", "look_down")
+
+	# Manual deadzone (extra safety; you can also rely on InputMap deadzone)
+	var has_input := look_vec.length() >= controller_look_deadzone
+
+	var desired_vel := Vector2.ZERO
+
+	if has_input:
+		# Optional: rescale after deadzone so it still reaches 1.0
+		var t = (look_vec.length() - controller_look_deadzone) / max(1.0 - controller_look_deadzone, 0.001)
+		look_vec = look_vec.normalized() * clamp(t, 0.0, 1.0)
+
+		# Convert stick to desired angular velocity (radians/sec)
+		desired_vel.x = -look_vec.x * controller_look_sensitivity
+		var y := look_vec.y
+		if controller_invert_y:
+			y = -y
+		desired_vel.y = -y * controller_look_sensitivity
+
+		# Ease toward stick velocity
+		var a = clamp(controller_look_accel * delta, 0.0, 1.0)
+		_look_vel = _look_vel.lerp(desired_vel, a)
+	else:
+		# Ease toward stop (inertia)
+		var d = clamp(controller_look_decel * delta, 0.0, 1.0)
+		_look_vel = _look_vel.lerp(Vector2.ZERO, d)
+
+	# Apply angular velocity (continue even after release, briefly)
+	_yaw += _look_vel.x * delta
+	_pitch += _look_vel.y * delta
+
+	# Clamp pitch
+	var min_p := deg_to_rad(min_pitch_deg)
+	var max_p := deg_to_rad(max_pitch_deg)
+	_pitch = clamp(_pitch, min_p, max_p)
+
+	_apply_pivot_rotation()
