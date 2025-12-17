@@ -114,3 +114,4 @@ voice_stream = ExtResource("5_kgffw")
 voice_pitch_min = 0.8
 voice_pitch_max = 1.2
 voice_blip_every = 5
+prompt_verb = "Interact with super cool NPC man"

@@ -18,6 +18,7 @@ config/icon="res://assets/test-assets/icon.svg"
 [autoload]
 
 QuestManager="*res://scripts/QuestManager.gd"
+InputHints="*res://scripts/InputHints.gd"
 
 [display]
 

@@ -13,8 +13,8 @@ signal talk_finished
 @export_multiline var repeat_intro: Array[String] = []
 
 @export_group("Dialogue Blocks")
-@export var blocks: Array[DialogueBlock] = []                 # base set (used on first visit and by default)
-@export var repeat_blocks_override: Array[DialogueBlock] = [] # if non-empty, use these on repeats
+@export var blocks: Array[DialogueBlock] = []
+@export var repeat_blocks_override: Array[DialogueBlock] = []
 
 @export_group("Voice Blips")
 @export var voice_stream: AudioStream
@@ -23,13 +23,13 @@ signal talk_finished
 @export var voice_blip_every: int = 2
 
 @export_group("Interaction")
-@export var prompt_text: String = "[E] Talk"
+@export var prompt_verb: String = "Talk"  # NEW: we build "[E] Talk" / "[A] Talk" automatically
 
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
 
 var _player_in := false
-var _player_body: CharacterBody3D = null # NEW: track player for grounded checks
+var _player_body: CharacterBody3D = null
 var _talking := false
 var _times_spoken := 0
 
@@ -37,7 +37,7 @@ var _times_spoken := 0
 var _block_idx := -1
 var _choice_picked := -1
 
-# the per-conversation list we’ll walk after filtering
+# per-conversation list after filtering
 var _talk_blocks: Array[DialogueBlock] = []
 
 # memory for play_once blocks this session
@@ -46,7 +46,14 @@ var _played_once: Dictionary = {}  # key:StringName -> true
 
 func _ready() -> void:
 	_prompt.visible = false
-	_prompt.text = prompt_text
+	_update_prompt_text()
+
+	# NEW: update prompt automatically when input scheme changes
+	if InputHints != null:
+		if not InputHints.scheme_changed.is_connected(_on_scheme_changed):
+			InputHints.scheme_changed.connect(_on_scheme_changed)
+
+
 	if _zone:
 		_zone.body_entered.connect(func(b):
 			if b is CharacterBody3D:
@@ -60,16 +67,29 @@ func _ready() -> void:
 				_player_in = false
 				_update_prompt())
 
+func _process(_delta: float) -> void:
+	# Ensure prompt updates when player lands/jumps while inside range
+	if _player_in and not _talking:
+		_update_prompt()
+
 func _unhandled_input(e: InputEvent) -> void:
 	if _player_in and not _talking and e.is_action_pressed("interact"):
-		# NEW: only allow talking while grounded
+		# Only allow talking while grounded
 		if _player_body != null and _player_body.is_on_floor():
 			_start_conversation()
 
-func _process(_delta: float) -> void:
-	# If the player entered while airborne, show the prompt once they land (and hide it again if they jump)
-	if _player_in and not _talking:
-		_update_prompt()
+func _on_scheme_changed(_is_controller: bool) -> void:
+	_update_prompt_text()
+
+func _update_prompt_text() -> void:
+	var using_controller := false
+	if InputHints != null:
+		using_controller = InputHints.using_controller
+	_prompt.text = ("[A] %s" % prompt_verb) if using_controller else ("[E] %s" % prompt_verb)
+
+
+
+	_prompt.text = ("Press A to %s" % prompt_verb) if using_controller else ("Press E to %s" % prompt_verb)
 
 func _start_conversation() -> void:
 	var ui := _ui()
@@ -83,10 +103,8 @@ func _start_conversation() -> void:
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
 
-	# decide which block list we’ll use THIS talk
 	_talk_blocks = _get_blocks_for_this_talk()
 
-	# show visit-specific intro
 	var intro: Array[String] = []
 	if _times_spoken == 0 and not first_visit_intro.is_empty():
 		intro = first_visit_intro
@@ -159,7 +177,6 @@ func _show_tail_then_continue() -> void:
 	if ui == null:
 		return
 
-	# mark play_once blocks as consumed (so future talks will skip them)
 	_mark_played_if_once(blk)
 
 	if blk.tail_lines.is_empty():
@@ -182,7 +199,6 @@ func _get_blocks_for_this_talk() -> Array[DialogueBlock]:
 	if _times_spoken == 0:
 		source = blocks
 	else:
-		# if you provide an override list for repeats, we use it
 		if repeat_blocks_override.size() > 0:
 			source = repeat_blocks_override
 		else:
@@ -205,10 +221,8 @@ func _get_blocks_for_this_talk() -> Array[DialogueBlock]:
 func _block_key(blk: DialogueBlock) -> StringName:
 	if blk.block_id != StringName():
 		return blk.block_id
-	# fallbacks so keys are stable even if arrays reorder:
 	if blk.resource_path != "":
 		return StringName(blk.resource_path)
-	# last resort: use display_name + index for this talk
 	return StringName("%s_%d" % [display_name, _block_idx])
 
 func _was_played(blk: DialogueBlock) -> bool:
@@ -222,13 +236,13 @@ func _mark_played_if_once(blk: DialogueBlock) -> void:
 	_played_once[k] = true
 
 # --- helpers ---
+
 func _ui() -> Node:
 	for n in get_tree().get_nodes_in_group("DialogueUI"):
 		return n
 	return null
 
 func _update_prompt() -> void:
-	# NEW: hide prompt if player is airborne
 	var grounded := (_player_body != null and _player_body.is_on_floor())
 	_prompt.visible = _player_in and grounded and not _talking
 
