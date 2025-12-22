@@ -1,6 +1,6 @@
 # res://scripts/npc/SimpleDialogueNPC.gd
 extends Node3D
-class_name SimpleDialogueNPC
+class_name NPCVisitArea
 
 signal talk_started
 signal talk_finished

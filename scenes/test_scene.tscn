@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=15 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
@@ -6,8 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
 [ext_resource type="PackedScene" uid="uid://5v2aqywejkmt" path="res://scenes/request_toast.tscn" id="6_thq7k"]
-[ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/npc_generic.tscn" id="8_pjseh"]
+[ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/NPC_VisitArea.tscn" id="8_pjseh"]
 [ext_resource type="PackedScene" uid="uid://74j7cmqt1e84" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
+[ext_resource type="PackedScene" uid="uid://dv58nnay3x7eo" path="res://scenes/NPC_NoRequest.tscn" id="9_uxy3f"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -70,8 +71,9 @@ fast_mode_chars_per_second = 500.0
 transform = Transform3D(2.68771, 0, 0, 0, 2.68771, 0, 0, 0, 2.68771, -1.08348, 1.46563, 4.9347)
 area_id = &"town_square"
 
-[node name="NPC_Generic" parent="." instance=ExtResource("8_pjseh")]
+[node name="NPC_VisitArea" parent="." instance=ExtResource("8_pjseh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.780439, 1.56536, -3.80945)
+npc_id = &"villager_1"
 first_visit_intro = Array[String](["hello. here is a quest"])
 repeat_intro = Array[String](["hello."])
 start_visit_request_id = &"visit_square"
@@ -79,3 +81,12 @@ start_visit_request_title = "Visit Town Square"
 start_visit_area_id = &"town_square"
 request_id_for_this_npc = &"visit_square"
 after_request_done_intro = Array[String](["thank you for completing my quest"])
+
+[node name="NPC_VisitArea2" parent="." instance=ExtResource("9_uxy3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02439, 1.56536, -1.05029)
+display_name = "Villager 2"
+npc_id = &"villager_2"
+first_visit_intro = Array[String](["hello there. I do not give out quests."])
+repeat_intro = Array[String](["go and see what my friend wants over there."])
+request_id_for_this_npc = &"visit_square"
+after_request_done_intro = Array[String](["you have completed my friend's quest. well done."])
