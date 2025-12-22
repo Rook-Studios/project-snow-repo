@@ -1,6 +1,6 @@
 # res://scripts/npc/SimpleDialogueNPC.gd
 extends Node3D
-class_name NPCVisitAreaRequest
+class_name SimpleDialogueNPC
 
 signal talk_started
 signal talk_finished
@@ -219,7 +219,6 @@ func _end_conversation() -> void:
 	_times_spoken += 1
 	_update_prompt()
 	talk_finished.emit()
-	print("END CONVO:", name)
 	
 	if npc_id != StringName():
 		EventBus.emit_talked_to(npc_id)
