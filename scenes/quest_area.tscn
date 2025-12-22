@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://74j7cmqt1e84"]
+
+[ext_resource type="Script" path="res://scripts/quest_area.gd" id="1_ktmt4"]
+[ext_resource type="Texture2D" uid="uid://oaqh8fbaupkx" path="res://assets/test-assets/icon.svg" id="2_2gdd7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1xh4j"]
+
+[node name="QuestArea" type="Area3D"]
+script = ExtResource("1_ktmt4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_1xh4j")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(0.9, 0, 0, 0, -3.93403e-08, 0.9, 0, -0.9, -3.93403e-08, 0, -0.457011, 0)
+modulate = Color(1, 0.1, 0.1, 1)
+texture = ExtResource("2_2gdd7")

@@ -1,12 +1,15 @@
-[gd_scene load_steps=16 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=22 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
+[ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
 [ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/npc_generic.tscn" id="5_hph5f"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="5_kgffw"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="6_iitjw"]
+[ext_resource type="PackedScene" uid="uid://5v2aqywejkmt" path="res://scenes/request_toast.tscn" id="6_thq7k"]
+[ext_resource type="PackedScene" uid="uid://74j7cmqt1e84" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -67,7 +70,50 @@ show_on_repeat_visits = true
 play_once = false
 block_id = &""
 
+[sub_resource type="Resource" id="Resource_fhmf2"]
+script = ExtResource("6_iitjw")
+lines = Array[String](["bombaclaat"])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
+[sub_resource type="Resource" id="Resource_rgjhl"]
+script = ExtResource("6_iitjw")
+lines = Array[String](["These lines should only be seen if you have not completed my friend's request over there.", "go talk to him to see what he wants."])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
+[sub_resource type="Resource" id="Resource_xdi50"]
+script = ExtResource("6_iitjw")
+lines = Array[String](["you have visited the town square, I see! what a lovely place that is", "thank you for listening to my friend and following his request, he tries to help everybody out."])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
 [node name="test-scene" type="Node3D"]
+script = ExtResource("1_skq1x")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_uj03q")
@@ -104,9 +150,12 @@ fast_mode_chars_per_second = 500.0
 
 [node name="JournalUI" parent="." instance=ExtResource("4_o0qvk")]
 
+[node name="RequestToast" parent="." instance=ExtResource("6_thq7k")]
+
 [node name="NPC_Generic" parent="." instance=ExtResource("5_hph5f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.139751, 1.56536, -6.843)
-display_name = "Dude Guy"
+display_name = "NPC Man"
+npc_id = &"npc_man"
 first_visit_intro = Array[String](["Hello i am [color=black][b][wave]NPC MAN[/wave][/b][/color], this is your first time talking to me."])
 repeat_intro = Array[String](["Hello i am [color=black][b][wave]NPC MAN[/wave][/b][/color], this is [b][bgcolor=red]NOT[/bgcolor][/b] your first time talking to me."])
 blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_7yfki"), SubResource("Resource_atm2l"), SubResource("Resource_xkrhr")])
@@ -115,3 +164,28 @@ voice_pitch_min = 0.8
 voice_pitch_max = 1.2
 voice_blip_every = 5
 prompt_verb = "Interact with super cool NPC man"
+start_visit_request_id = &"visit_square"
+start_visit_request_title = "Visit town square"
+start_visit_area_id = &"town_square"
+request_id_for_this_npc = &"visit_square"
+after_request_done_intro = Array[String](["hello there."])
+after_request_done_blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_fhmf2")])
+
+[node name="NPC_Generic2" parent="." instance=ExtResource("5_hph5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.87495, 1.56536, -6.77263)
+display_name = "Millicent Bystander"
+npc_id = &"millicent"
+first_visit_intro = Array[String](["Hello there, I am Millicent Bystander, i do not give out quests, I just sit here and vibe mostly."])
+repeat_intro = Array[String](["hello again, it is I, Millicent Bystander."])
+blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_rgjhl")])
+voice_stream = ExtResource("5_kgffw")
+voice_pitch_min = 0.6
+voice_pitch_max = 0.8
+voice_blip_every = 8
+prompt_verb = "talk to this innocent bystander"
+request_id_for_this_npc = &"visit_square"
+after_request_done_blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_xdi50")])
+
+[node name="QuestArea" parent="." instance=ExtResource("9_1v0jg")]
+transform = Transform3D(2.68771, 0, 0, 0, 2.68771, 0, 0, 0, 2.68771, -1.08348, 1.46563, 4.9347)
+area_id = &"town_square"

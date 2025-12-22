@@ -19,6 +19,8 @@ config/icon="res://assets/test-assets/icon.svg"
 
 QuestManager="*res://scripts/QuestManager.gd"
 InputHints="*res://scripts/InputHints.gd"
+EventBus="*res://scripts/EventBus.gd"
+Requests="*res://scripts/Requests.gd"
 
 [display]
 
@@ -30,6 +32,7 @@ window/size/mode=4
 
 folder_colors={
 "res://assets/": "teal",
+"res://resources/": "purple",
 "res://scenes/": "red",
 "res://scripts/": "orange"
 }

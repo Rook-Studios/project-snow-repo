@@ -253,7 +253,7 @@ func _physics_process(delta: float) -> void:
 	
 	# 7) Quest Checking
 	if Input.is_action_just_pressed("check"):
-		print(QuestManager.quests)  # see states/logs
+		print(Requests.total_completed)
 		
 	# 8) Controller input searching
 	_apply_controller_look(delta)

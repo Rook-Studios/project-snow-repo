@@ -7,6 +7,8 @@ signal talk_finished
 
 @export_group("Identity")
 @export var display_name: String = "Villager"
+@export var npc_id: StringName = &""
+
 
 @export_group("Visit Intros")
 @export_multiline var first_visit_intro: Array[String] = []
@@ -24,6 +26,18 @@ signal talk_finished
 
 @export_group("Interaction")
 @export var prompt_verb: String = "Talk"  # NEW: we build "[E] Talk" / "[A] Talk" automatically
+
+@export_group("Request Triggers")
+@export var start_visit_request_id: StringName = &""
+@export var start_visit_request_title: String = ""
+@export var start_visit_area_id: StringName = &""
+
+@export_group("Request Dialogue Gating")
+@export var request_id_for_this_npc: StringName = &""   # the request they give (optional)
+@export_multiline var after_request_done_intro: Array[String] = []
+@export var after_request_done_blocks: Array[DialogueBlock] = []
+
+
 
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
@@ -99,17 +113,31 @@ func _start_conversation() -> void:
 	_talking = true
 	choice_reset()
 	_update_prompt()
+	
+	var req_done := false
+	if request_id_for_this_npc != StringName() and Requests != null:
+		req_done = Requests.is_done(request_id_for_this_npc)
+
 
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
 
-	_talk_blocks = _get_blocks_for_this_talk()
+	if req_done and not after_request_done_blocks.is_empty():
+		_talk_blocks = after_request_done_blocks
+	else:
+		_talk_blocks = _get_blocks_for_this_talk()
+
 
 	var intro: Array[String] = []
-	if _times_spoken == 0 and not first_visit_intro.is_empty():
-		intro = first_visit_intro
-	elif _times_spoken > 0 and not repeat_intro.is_empty():
-		intro = repeat_intro
+
+	if req_done and not after_request_done_intro.is_empty():
+		intro = after_request_done_intro
+	else:
+		if _times_spoken == 0 and not first_visit_intro.is_empty():
+			intro = first_visit_intro
+		elif _times_spoken > 0 and not repeat_intro.is_empty():
+			intro = repeat_intro
+
 
 	if not intro.is_empty():
 		_connect_closed_once(_on_intro_closed)
@@ -191,6 +219,14 @@ func _end_conversation() -> void:
 	_times_spoken += 1
 	_update_prompt()
 	talk_finished.emit()
+	
+	if npc_id != StringName():
+		EventBus.emit_talked_to(npc_id)
+	
+	if start_visit_request_id != StringName() and not Requests.requests.has(start_visit_request_id):
+		Requests.start_visit_area(start_visit_request_id, start_visit_request_title, start_visit_area_id)
+
+
 
 # --- block selection + tracking ---
 
