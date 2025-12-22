@@ -82,7 +82,7 @@ start_visit_area_id = &"town_square"
 request_id_for_this_npc = &"visit_square"
 after_request_done_intro = Array[String](["thank you for completing my quest"])
 
-[node name="NPC_VisitArea2" parent="." instance=ExtResource("9_uxy3f")]
+[node name="NPC_NoRequest" parent="." instance=ExtResource("9_uxy3f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02439, 1.56536, -1.05029)
 display_name = "Villager 2"
 npc_id = &"villager_2"

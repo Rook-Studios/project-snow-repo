@@ -7,7 +7,7 @@ radius = 1.26381
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_37i88"]
 
-[node name="NPC_VisitArea" type="Node3D"]
+[node name="NPC_NoRequest" type="Node3D"]
 script = ExtResource("1_mhn3x")
 
 [node name="InteractZone" type="Area3D" parent="."]
