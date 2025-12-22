@@ -1,15 +1,16 @@
-[gd_scene load_steps=22 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=21 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
-[ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/npc_generic.tscn" id="5_hph5f"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="5_kgffw"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="6_iitjw"]
 [ext_resource type="PackedScene" uid="uid://5v2aqywejkmt" path="res://scenes/request_toast.tscn" id="6_thq7k"]
+[ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/NPC_VisitArea.tscn" id="8_s2s02"]
 [ext_resource type="PackedScene" uid="uid://74j7cmqt1e84" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
+[ext_resource type="PackedScene" uid="uid://cxl1d56ldqtmj" path="res://scenes/NPC_Generic.tscn" id="11_kwjj0"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -28,23 +29,23 @@ sky = SubResource("Sky_h6w6j")
 [sub_resource type="BoxShape3D" id="BoxShape3D_fcwaw"]
 size = Vector3(1, 0.0372925, 1)
 
-[sub_resource type="Resource" id="Resource_7yfki"]
+[sub_resource type="Resource" id="Resource_v1df3"]
 script = ExtResource("6_iitjw")
-lines = Array[String](["this is the first line (0) in the first block (0)", "this is the second line (1) in the first block (0)", "this is the third line (2) in the first block (0), where i will now give you a [b]choice[/b]. choose wisely."])
-choice_line_index = 2
-choice_labels = Array[String](["choice 0", "choice 1", "choice 2"])
-followup_choice0 = Array[String](["ah, choice 0. a simple but good choice."])
-followup_choice1 = Array[String](["ah, choice 1, the real chooser's choice when it comes to choices."])
-followup_choice2 = Array[String](["ahah, choice 2. my personal favourite of all the choices."])
-tail_lines = Array[String](["well, it has been fun choosing with you. I hope you enjoyed your choice, and I hope to speak to you again soon. [i]Goodbye.[/i]"])
+lines = Array[String](["How are things? I hear you are new in town."])
+choice_line_index = 0
+choice_labels = Array[String](["I am!", "You heard wrong."])
+followup_choice0 = Array[String](["Ah, good! I have a tip for you in that case."])
+followup_choice1 = Array[String](["Ah. well, no matter, I can still give advice like a true quest giver."])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String](["you should visit the [b]Town Square.[/b] I hear it's very red this time of year. Good luck on your quest."])
 show_on_first_visit = true
 show_on_repeat_visits = false
-play_once = false
+play_once = true
 block_id = &""
 
-[sub_resource type="Resource" id="Resource_atm2l"]
+[sub_resource type="Resource" id="Resource_q5jj1"]
 script = ExtResource("6_iitjw")
-lines = Array[String](["this is my second dialogue block, it should only play after you have spoken to me once and seen the end of my first block.", "hopefully this will play the second time ONLY, and not after."])
+lines = Array[String](["you should visit the [b]Town Square.[/b] I hear it's crimson this time of year, since it has been a while since I have you this quest.", "Good luck on your quest, young traveller."])
 choice_line_index = -1
 choice_labels = Array[String]([])
 followup_choice0 = Array[String]([])
@@ -56,23 +57,9 @@ show_on_repeat_visits = true
 play_once = true
 block_id = &""
 
-[sub_resource type="Resource" id="Resource_xkrhr"]
+[sub_resource type="Resource" id="Resource_gyupu"]
 script = ExtResource("6_iitjw")
-lines = Array[String](["this is the end of the second block, OR the entire third block if you have spoken to me enough times."])
-choice_line_index = -1
-choice_labels = Array[String]([])
-followup_choice0 = Array[String]([])
-followup_choice1 = Array[String]([])
-followup_choice2 = Array[String]([])
-tail_lines = Array[String]([])
-show_on_first_visit = false
-show_on_repeat_visits = true
-play_once = false
-block_id = &""
-
-[sub_resource type="Resource" id="Resource_fhmf2"]
-script = ExtResource("6_iitjw")
-lines = Array[String](["bombaclaat"])
+lines = Array[String]([])
 choice_line_index = -1
 choice_labels = Array[String]([])
 followup_choice0 = Array[String]([])
@@ -84,29 +71,15 @@ show_on_repeat_visits = true
 play_once = false
 block_id = &""
 
-[sub_resource type="Resource" id="Resource_rgjhl"]
+[sub_resource type="Resource" id="Resource_cs7vj"]
 script = ExtResource("6_iitjw")
-lines = Array[String](["These lines should only be seen if you have not completed my friend's request over there.", "go talk to him to see what he wants."])
-choice_line_index = -1
-choice_labels = Array[String]([])
-followup_choice0 = Array[String]([])
-followup_choice1 = Array[String]([])
-followup_choice2 = Array[String]([])
-tail_lines = Array[String]([])
-show_on_first_visit = true
-show_on_repeat_visits = true
-play_once = false
-block_id = &""
-
-[sub_resource type="Resource" id="Resource_xdi50"]
-script = ExtResource("6_iitjw")
-lines = Array[String](["you have visited the town square, I see! what a lovely place that is", "thank you for listening to my friend and following his request, he tries to help everybody out."])
-choice_line_index = -1
-choice_labels = Array[String]([])
-followup_choice0 = Array[String]([])
-followup_choice1 = Array[String]([])
-followup_choice2 = Array[String]([])
-tail_lines = Array[String]([])
+lines = Array[String](["I hope the Town Square was to your liking. How was the colour?"])
+choice_line_index = 0
+choice_labels = Array[String](["Red.", "Red!", "Red..?"])
+followup_choice0 = Array[String](["but of course, it is always red. Redder than ever, I hope."])
+followup_choice1 = Array[String](["Ah, a true Redhead like myself! I am glad you enjoyed its hue."])
+followup_choice2 = Array[String](["You sound confused. Are you perhaps colourblind, and thus did not appreciate the natural shades of the square?", "No matter - you visited it, and that is enough."])
+tail_lines = Array[String](["Thank you for following my quest, young traveller. I hope to see you again soon."])
 show_on_first_visit = true
 show_on_repeat_visits = true
 play_once = false
@@ -152,40 +125,28 @@ fast_mode_chars_per_second = 500.0
 
 [node name="RequestToast" parent="." instance=ExtResource("6_thq7k")]
 
-[node name="NPC_Generic" parent="." instance=ExtResource("5_hph5f")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.139751, 1.56536, -6.843)
-display_name = "NPC Man"
-npc_id = &"npc_man"
-first_visit_intro = Array[String](["Hello i am [color=black][b][wave]NPC MAN[/wave][/b][/color], this is your first time talking to me."])
-repeat_intro = Array[String](["Hello i am [color=black][b][wave]NPC MAN[/wave][/b][/color], this is [b][bgcolor=red]NOT[/bgcolor][/b] your first time talking to me."])
-blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_7yfki"), SubResource("Resource_atm2l"), SubResource("Resource_xkrhr")])
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.8
-voice_pitch_max = 1.2
-voice_blip_every = 5
-prompt_verb = "Interact with super cool NPC man"
-start_visit_request_id = &"visit_square"
-start_visit_request_title = "Visit town square"
-start_visit_area_id = &"town_square"
-request_id_for_this_npc = &"visit_square"
-after_request_done_intro = Array[String](["hello there."])
-after_request_done_blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_fhmf2")])
-
-[node name="NPC_Generic2" parent="." instance=ExtResource("5_hph5f")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.87495, 1.56536, -6.77263)
-display_name = "Millicent Bystander"
-npc_id = &"millicent"
-first_visit_intro = Array[String](["Hello there, I am Millicent Bystander, i do not give out quests, I just sit here and vibe mostly."])
-repeat_intro = Array[String](["hello again, it is I, Millicent Bystander."])
-blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_rgjhl")])
-voice_stream = ExtResource("5_kgffw")
-voice_pitch_min = 0.6
-voice_pitch_max = 0.8
-voice_blip_every = 8
-prompt_verb = "talk to this innocent bystander"
-request_id_for_this_npc = &"visit_square"
-after_request_done_blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_xdi50")])
-
 [node name="QuestArea" parent="." instance=ExtResource("9_1v0jg")]
 transform = Transform3D(2.68771, 0, 0, 0, 2.68771, 0, 0, 0, 2.68771, -1.08348, 1.46563, 4.9347)
 area_id = &"town_square"
+
+[node name="NPC_VisitArea" parent="." instance=ExtResource("8_s2s02")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.56536, -7)
+display_name = "Quest Man"
+npc_id = &"quest_man"
+first_visit_intro = Array[String](["Hello there, I am [b][i][wave]Quest Man.[/wave][/i][/b]"])
+repeat_intro = Array[String](["Greetings."])
+blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_v1df3"), SubResource("Resource_q5jj1"), SubResource("Resource_gyupu")])
+voice_stream = ExtResource("5_kgffw")
+voice_blip_every = 4
+prompt_verb = "receive quest"
+request_id_for_this_npc = &"visit_square"
+after_request_done_intro = Array[String](["Ah, my young quester! I see you have completed my quest."])
+after_request_done_blocks = Array[ExtResource("6_iitjw")]([SubResource("Resource_cs7vj")])
+
+[node name="NPC_Generic" parent="." instance=ExtResource("11_kwjj0")]
+display_name = "Millicent"
+npc_id = &"millicent"
+first_visit_intro = Array[String](["Hello there, I am Millicent Bystander. I do not give you any quests, I mostly just chill here and support my quest-giving friend."])
+repeat_intro = Array[String](["Hello again."])
+request_id_for_this_npc = &"visit_square"
+after_request_done_intro = Array[String](["Ah, you have completed my friend's quest. Thank you very much."])
