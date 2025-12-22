@@ -9,7 +9,6 @@ signal talk_finished
 @export var display_name: String = "Villager"
 @export var npc_id: StringName = &""
 
-
 @export_group("Visit Intros")
 @export_multiline var first_visit_intro: Array[String] = []
 @export_multiline var repeat_intro: Array[String] = []
@@ -25,7 +24,7 @@ signal talk_finished
 @export var voice_blip_every: int = 2
 
 @export_group("Interaction")
-@export var prompt_verb: String = "Talk"  # NEW: we build "[E] Talk" / "[A] Talk" automatically
+@export var prompt_verb: String = "Talk"
 
 @export_group("Request Triggers")
 @export var start_visit_request_id: StringName = &""
@@ -33,11 +32,9 @@ signal talk_finished
 @export var start_visit_area_id: StringName = &""
 
 @export_group("Request Dialogue Gating")
-@export var request_id_for_this_npc: StringName = &""   # the request they give (optional)
+@export var request_id_for_this_npc: StringName = &""
 @export_multiline var after_request_done_intro: Array[String] = []
 @export var after_request_done_blocks: Array[DialogueBlock] = []
-
-
 
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
@@ -54,41 +51,39 @@ var _choice_picked := -1
 # per-conversation list after filtering
 var _talk_blocks: Array[DialogueBlock] = []
 
-# memory for play_once blocks this session
-var _played_once: Dictionary = {}  # key:StringName -> true
+# memory for play_once blocks
+var _played_once: Dictionary = {}
 
 
 func _ready() -> void:
 	_prompt.visible = false
 	_update_prompt_text()
 
-	# NEW: update prompt automatically when input scheme changes
 	if InputHints != null:
 		if not InputHints.scheme_changed.is_connected(_on_scheme_changed):
 			InputHints.scheme_changed.connect(_on_scheme_changed)
-
 
 	if _zone:
 		_zone.body_entered.connect(func(b):
 			if b is CharacterBody3D:
 				_player_body = b
 				_player_in = true
-				_update_prompt())
+				_update_prompt()
+		)
 		_zone.body_exited.connect(func(b):
 			if b == _player_body:
 				_player_body = null
 			if b is CharacterBody3D:
 				_player_in = false
-				_update_prompt())
+				_update_prompt()
+		)
 
 func _process(_delta: float) -> void:
-	# Ensure prompt updates when player lands/jumps while inside range
 	if _player_in and not _talking:
 		_update_prompt()
 
 func _unhandled_input(e: InputEvent) -> void:
 	if _player_in and not _talking and e.is_action_pressed("interact"):
-		# Only allow talking while grounded
 		if _player_body != null and _player_body.is_on_floor():
 			_start_conversation()
 
@@ -96,13 +91,7 @@ func _on_scheme_changed(_is_controller: bool) -> void:
 	_update_prompt_text()
 
 func _update_prompt_text() -> void:
-	var using_controller := false
-	if InputHints != null:
-		using_controller = InputHints.using_controller
-	_prompt.text = ("[A] %s" % prompt_verb) if using_controller else ("[E] %s" % prompt_verb)
-
-
-
+	var using_controller := InputHints != null and InputHints.using_controller
 	_prompt.text = ("Press A to %s" % prompt_verb) if using_controller else ("Press E to %s" % prompt_verb)
 
 func _start_conversation() -> void:
@@ -113,11 +102,10 @@ func _start_conversation() -> void:
 	_talking = true
 	choice_reset()
 	_update_prompt()
-	
+
 	var req_done := false
 	if request_id_for_this_npc != StringName() and Requests != null:
 		req_done = Requests.is_done(request_id_for_this_npc)
-
 
 	ui.set_speaker_name(display_name)
 	ui.set_voice(voice_stream, voice_pitch_min, voice_pitch_max, voice_blip_every)
@@ -127,9 +115,7 @@ func _start_conversation() -> void:
 	else:
 		_talk_blocks = _get_blocks_for_this_talk()
 
-
 	var intro: Array[String] = []
-
 	if req_done and not after_request_done_intro.is_empty():
 		intro = after_request_done_intro
 	else:
@@ -137,7 +123,6 @@ func _start_conversation() -> void:
 			intro = first_visit_intro
 		elif _times_spoken > 0 and not repeat_intro.is_empty():
 			intro = repeat_intro
-
 
 	if not intro.is_empty():
 		_connect_closed_once(_on_intro_closed)
@@ -161,8 +146,8 @@ func _next_block_or_finish() -> void:
 		return
 
 	ui.set_speaker_name(display_name)
-
 	var blk := _talk_blocks[_block_idx]
+
 	if blk.choice_line_index >= 0 and blk.choice_labels.size() > 0:
 		_connect_choice_once(_on_choice_selected_block)
 		_connect_closed_once(_on_block_pre_closed)
@@ -190,13 +175,11 @@ func _on_choice_selected_block(_line_idx: int, _choice_idx: int) -> void:
 		0: follow = blk.followup_choice0
 		1: follow = blk.followup_choice1
 		2: follow = blk.followup_choice2
-		_: follow = []
 
 	if follow.is_empty():
 		_show_tail_then_continue()
 	else:
 		_connect_closed_once(func(): _show_tail_then_continue())
-		ui.set_speaker_name(display_name)
 		ui.show_lines(follow)
 
 func _show_tail_then_continue() -> void:
@@ -211,7 +194,6 @@ func _show_tail_then_continue() -> void:
 		_next_block_or_finish()
 	else:
 		_connect_closed_once(_next_block_or_finish)
-		ui.set_speaker_name(display_name)
 		ui.show_lines(blk.tail_lines)
 
 func _end_conversation() -> void:
@@ -219,39 +201,36 @@ func _end_conversation() -> void:
 	_times_spoken += 1
 	_update_prompt()
 	talk_finished.emit()
-	
+
 	if npc_id != StringName():
 		EventBus.emit_talked_to(npc_id)
-	
+
 	if start_visit_request_id != StringName() and not Requests.requests.has(start_visit_request_id):
-		Requests.start_visit_area(start_visit_request_id, start_visit_request_title, start_visit_area_id)
+		Requests.start_visit_area(
+			start_visit_request_id,
+			start_visit_request_title,
+			start_visit_area_id
+		)
 
-
-
-# --- block selection + tracking ---
+# --- block filtering ---
 
 func _get_blocks_for_this_talk() -> Array[DialogueBlock]:
-	var source: Array[DialogueBlock] = []
-	if _times_spoken == 0:
-		source = blocks
-	else:
-		if repeat_blocks_override.size() > 0:
-			source = repeat_blocks_override
-		else:
-			source = blocks
+	var source := blocks
+	if _times_spoken > 0 and repeat_blocks_override.size() > 0:
+		source = repeat_blocks_override
 
-	var first_visit := (_times_spoken == 0)
+	var first_visit := _times_spoken == 0
 	var filtered: Array[DialogueBlock] = []
+
 	for blk in source:
-		if not (blk is DialogueBlock):
-			continue
 		if first_visit and not blk.show_on_first_visit:
 			continue
-		if (not first_visit) and not blk.show_on_repeat_visits:
+		if not first_visit and not blk.show_on_repeat_visits:
 			continue
 		if blk.play_once and _was_played(blk):
 			continue
 		filtered.append(blk)
+
 	return filtered
 
 func _block_key(blk: DialogueBlock) -> StringName:
@@ -262,14 +241,11 @@ func _block_key(blk: DialogueBlock) -> StringName:
 	return StringName("%s_%d" % [display_name, _block_idx])
 
 func _was_played(blk: DialogueBlock) -> bool:
-	var k := _block_key(blk)
-	return bool(_played_once.get(k, false))
+	return bool(_played_once.get(_block_key(blk), false))
 
 func _mark_played_if_once(blk: DialogueBlock) -> void:
-	if not blk.play_once:
-		return
-	var k := _block_key(blk)
-	_played_once[k] = true
+	if blk.play_once:
+		_played_once[_block_key(blk)] = true
 
 # --- helpers ---
 
@@ -279,21 +255,17 @@ func _ui() -> Node:
 	return null
 
 func _update_prompt() -> void:
-	var grounded := (_player_body != null and _player_body.is_on_floor())
+	var grounded := _player_body != null and _player_body.is_on_floor()
 	_prompt.visible = _player_in and grounded and not _talking
 
 func _connect_closed_once(fn: Callable) -> void:
 	var ui := _ui()
-	if ui == null:
-		return
-	if not ui.closed.is_connected(fn):
+	if ui != null and not ui.closed.is_connected(fn):
 		ui.closed.connect(fn, CONNECT_ONE_SHOT)
 
 func _connect_choice_once(fn: Callable) -> void:
 	var ui := _ui()
-	if ui == null:
-		return
-	if not ui.choice_selected.is_connected(fn):
+	if ui != null and not ui.choice_selected.is_connected(fn):
 		ui.choice_selected.connect(fn, CONNECT_ONE_SHOT)
 
 func choice_reset() -> void:
