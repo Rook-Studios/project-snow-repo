@@ -106,4 +106,3 @@ first_visit_intro = Array[String](["Hello! you should only be able to see me if 
 [node name="GateByWorldState" type="Node" parent="NPC_NoRequest2"]
 script = ExtResource("11_ww1o2")
 required_flag = &"visit_square"
-mode = 4

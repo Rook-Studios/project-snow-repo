@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://dv58nnay3x7eo"]
+[gd_scene load_steps=5 format=3 uid="uid://dv58nnay3x7eo"]
 
 [ext_resource type="Script" path="res://scripts/NPCNoRequest.gd" id="1_mhn3x"]
 
@@ -6,6 +6,8 @@
 radius = 1.26381
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_37i88"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hf0au"]
 
 [node name="NPC_NoRequest" type="Node3D"]
 script = ExtResource("1_mhn3x")
@@ -22,3 +24,8 @@ mesh = SubResource("CapsuleMesh_37i88")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32612, 0)
 billboard = 1
 text = "Press E to talk"
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("CapsuleShape3D_hf0au")

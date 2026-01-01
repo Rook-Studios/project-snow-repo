@@ -10,6 +10,10 @@ enum Mode { Visible, EnableInteraction, EnableArea, EnableNode, RemoveNode } # N
 @export var mode: Mode = Mode.Visible
 @export var target_path: NodePath
 
+@export var visible_disables_collision: bool = true
+@export var visible_disables_areas: bool = true # disables Area3D monitoring when hidden
+
+
 var _did_remove := false
 @onready var _target: Node = get_node(target_path) if target_path != NodePath() else get_parent()
 
@@ -42,6 +46,14 @@ func _apply() -> void:
 			elif _target is Node3D:
 				(_target as Node3D).visible = ok
 
+			# Defer collision/area toggles to avoid physics refresh issues
+			if visible_disables_collision:
+				call_deferred("_set_collisions_enabled", _target, ok)
+			if visible_disables_areas:
+				call_deferred("_set_areas_enabled", _target, ok)
+
+
+
 		Mode.EnableNode:
 			_target.process_mode = Node.PROCESS_MODE_INHERIT if ok else Node.PROCESS_MODE_DISABLED
 
@@ -62,3 +74,27 @@ func _apply() -> void:
 				# Usually also remove this component immediately (optional safety):
 				if is_instance_valid(self):
 					queue_free()
+
+func _set_collisions_enabled(root: Node, enabled: bool) -> void:
+	# Handle the root itself if it is a collision node
+	if root is CollisionShape3D:
+		(root as CollisionShape3D).set_deferred("disabled", not enabled)
+	elif root is CollisionPolygon3D:
+		(root as CollisionPolygon3D).set_deferred("disabled", not enabled)
+
+	# Then recurse children
+	for c in root.get_children():
+		_set_collisions_enabled(c, enabled)
+
+
+func _set_areas_enabled(root: Node, enabled: bool) -> void:
+	# Handle the root itself if it is an Area3D
+	if root is Area3D:
+		var a := root as Area3D
+		# Defer so physics updates cleanly
+		a.set_deferred("monitoring", enabled)
+		a.set_deferred("monitorable", enabled)
+
+	# Then recurse children
+	for c in root.get_children():
+		_set_areas_enabled(c, enabled)
