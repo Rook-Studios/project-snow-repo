@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=16 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://5v2aqywejkmt" path="res://scenes/request_toast.tscn" id="6_thq7k"]
 [ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/NPC_VisitArea.tscn" id="8_pjseh"]
 [ext_resource type="PackedScene" uid="uid://74j7cmqt1e84" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
+[ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="9_6c0jo"]
 [ext_resource type="PackedScene" uid="uid://dv58nnay3x7eo" path="res://scenes/NPC_NoRequest.tscn" id="9_uxy3f"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
@@ -76,6 +77,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.780439, 1.56536, -3.80945)
 npc_id = &"villager_1"
 first_visit_intro = Array[String](["hello. here is a quest"])
 repeat_intro = Array[String](["hello."])
+voice_stream = ExtResource("9_6c0jo")
+voice_pitch_min = 0.6
+voice_pitch_max = 0.8
 start_visit_request_id = &"visit_square"
 start_visit_request_title = "Visit Town Square"
 start_visit_area_id = &"town_square"
@@ -88,5 +92,7 @@ display_name = "Villager 2"
 npc_id = &"villager_2"
 first_visit_intro = Array[String](["hello there. I do not give out quests."])
 repeat_intro = Array[String](["go and see what my friend wants over there."])
+voice_stream = ExtResource("9_6c0jo")
+voice_blip_every = 1
 request_id_for_this_npc = &"visit_square"
 after_request_done_intro = Array[String](["you have completed my friend's quest. well done."])
