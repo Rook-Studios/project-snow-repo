@@ -21,6 +21,7 @@ QuestManager="*res://scripts/QuestManager.gd"
 InputHints="*res://scripts/InputHints.gd"
 EventBus="*res://scripts/EventBus.gd"
 Requests="*res://scripts/Requests.gd"
+WorldState="*res://scripts/WorldState.gd"
 
 [display]
 

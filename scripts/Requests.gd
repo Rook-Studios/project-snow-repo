@@ -160,12 +160,18 @@ func _complete(id: StringName) -> void:
 	r.state = "done"
 	requests[id] = r
 
-	# NEW: global progression counter
 	total_completed += 1
 	total_completed_changed.emit(total_completed)
 
+	#  Update state first
+	if WorldState != null:
+		WorldState.set_flag(id)
+		WorldState.inc_counter(&"requests_completed")
+
+	#  Then notify listeners
 	request_updated.emit(id)
 	request_completed.emit(id)
+
 
 	
 func completed_total() -> int:

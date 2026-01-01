@@ -1,6 +1,8 @@
 extends Node3D
 
+@onready var npc := $NPC_NoRequest2
 
-func _ready():
-	#Requests.start_visit_area(&"visit_square", "Visit the town square", &"town_square")
-	pass
+func _ready() -> void:
+	if WorldState == null:
+		push_error("WorldState autoload missing")
+		return
