@@ -19,7 +19,7 @@ func _on_request_completed(id: StringName) -> void:
 	var r: Dictionary = Requests.requests.get(id, {})
 	var title := String(r.get("title", String(id)))
 
-	show_toast("%s: complete!" % title)
+	show_toast("%s —  complete!" % title)
 
 func show_toast(text: String) -> void:
 	label.text = text
