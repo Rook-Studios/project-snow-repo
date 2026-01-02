@@ -41,7 +41,7 @@ func _refresh() -> void:
 		# Notes (shown next to title)
 		var notes_bb := ""
 		if notes.strip_edges() != "":
-			notes_bb = ": %s" % notes
+			notes_bb = " %s" % notes
 
 		# Optional progress suffix for count-based tasks
 		var progress_bb := ""
@@ -51,7 +51,7 @@ func _refresh() -> void:
 			if need > 1:
 				progress_bb = "  [i](%d/%d)[/i]" % [count, need]
 
-		var bb := "[b][i]%s[/i][/b]%s%s" % [title, notes_bb, progress_bb]
+		var bb := "[b][i]%s -[/i][/b]%s%s" % [title, notes_bb, progress_bb]
 
 		var rtl := _make_rich_line(bb)
 

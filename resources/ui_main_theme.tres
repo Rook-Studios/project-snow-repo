@@ -1,3 +1,52 @@
-[gd_resource type="Theme" format=3 uid="uid://ujvnsi28r4ks"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://ujvnsi28r4ks"]
+
+[ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/Daydream DEMO.otf" id="1_o4vvx"]
+[ext_resource type="Texture2D" uid="uid://b4irnf78d1gb0" path="res://assets/test-assets/text_box_icon_test.png" id="2_dnsk8"]
+[ext_resource type="FontFile" uid="uid://cyoqwih45m8h8" path="res://resources/GrapeSoda.ttf" id="2_qnxum"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pohu6"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_806ry"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kuihk"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gyl3x"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nf8g5"]
+texture = ExtResource("2_dnsk8")
+texture_margin_left = 8.0
+texture_margin_top = 8.0
+texture_margin_right = 8.0
+texture_margin_bottom = 8.0
 
 [resource]
+Button/colors/font_color = Color(0.439216, 0.176471, 0.0862745, 1)
+Button/colors/font_focus_color = Color(0.66, 0.2937, 0.1716, 1)
+Button/colors/font_hover_color = Color(0.658824, 0.294118, 0.172549, 1)
+Button/colors/font_hover_pressed_color = Color(0.3, 0.1335, 0.078, 1)
+Button/colors/font_outline_color = Color(0.0705882, 0.027451, 0.0117647, 1)
+Button/colors/font_pressed_color = Color(0.26, 0.0845, 0.026, 1)
+Button/constants/outline_size = 16
+Button/font_sizes/font_size = 24
+Button/fonts/font = ExtResource("1_o4vvx")
+Button/styles/focus = SubResource("StyleBoxTexture_pohu6")
+Button/styles/hover = SubResource("StyleBoxTexture_806ry")
+Button/styles/normal = SubResource("StyleBoxTexture_kuihk")
+Button/styles/pressed = SubResource("StyleBoxTexture_gyl3x")
+Label/colors/font_color = Color(0.439216, 0.176471, 0.0862745, 1)
+Label/colors/font_outline_color = Color(0.0705882, 0.027451, 0.0117647, 1)
+Label/constants/outline_size = 24
+Label/font_sizes/font_size = 32
+Label/fonts/font = ExtResource("1_o4vvx")
+Panel/styles/panel = SubResource("StyleBoxTexture_nf8g5")
+RichTextLabel/colors/default_color = Color(0.44, 0.176, 0.088, 1)
+RichTextLabel/colors/font_outline_color = Color(0.07, 0.0273933, 0.0119, 1)
+RichTextLabel/constants/outline_size = 18
+RichTextLabel/font_sizes/bold_font_size = 40
+RichTextLabel/font_sizes/bold_italics_font_size = 29
+RichTextLabel/font_sizes/italics_font_size = 32
+RichTextLabel/font_sizes/normal_font_size = 56
+RichTextLabel/fonts/bold_font = ExtResource("1_o4vvx")
+RichTextLabel/fonts/bold_italics_font = ExtResource("1_o4vvx")
+RichTextLabel/fonts/italics_font = ExtResource("1_o4vvx")
+RichTextLabel/fonts/normal_font = ExtResource("2_qnxum")

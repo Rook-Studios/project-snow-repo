@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dv58nnay3x7eo"]
+[gd_scene load_steps=6 format=3 uid="uid://dv58nnay3x7eo"]
 
 [ext_resource type="Script" path="res://scripts/NPCNoRequest.gd" id="1_mhn3x"]
+[ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/Daydream DEMO.otf" id="2_ehy45"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_xemqk"]
 radius = 1.26381
@@ -24,6 +25,8 @@ mesh = SubResource("CapsuleMesh_37i88")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32612, 0)
 billboard = 1
 text = "Press E to talk"
+font = ExtResource("2_ehy45")
+outline_size = 24
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
