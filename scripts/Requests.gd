@@ -13,6 +13,7 @@ enum Type { DELIVERY, TALK_TO, TALK_N_UNIQUE, VISIT_AREA, INTERACT_OBJECT }
 # requests[id] = {
 #   "id": StringName,
 #   "title": String,
+#	"notes": String,
 #   "type": int,
 #   "state": "active"/"done",
 #   "target": StringName,        # npc/area/object id (optional)
@@ -34,10 +35,11 @@ func _ready() -> void:
 	
 
 
-func start_delivery(id: StringName, title: String, to_npc_id: StringName, item_id: StringName) -> void:
+func start_delivery(id: StringName, title: String, notes: String, to_npc_id: StringName, item_id: StringName) -> void:
 	_start({
 		"id": id,
 		"title": title,
+		"notes": notes,
 		"type": Type.DELIVERY,
 		"state": "active",
 		"target": to_npc_id,
@@ -46,10 +48,11 @@ func start_delivery(id: StringName, title: String, to_npc_id: StringName, item_i
 		"count": 0,
 	})
 
-func start_talk_to(id: StringName, title: String, npc_id: StringName) -> void:
+func start_talk_to(id: StringName, title: String, notes: String, npc_id: StringName) -> void:
 	_start({
 		"id": id,
 		"title": title,
+		"notes": notes,
 		"type": Type.TALK_TO,
 		"state": "active",
 		"target": npc_id,
@@ -57,10 +60,11 @@ func start_talk_to(id: StringName, title: String, npc_id: StringName) -> void:
 		"count": 0,
 	})
 
-func start_talk_n_unique(id: StringName, title: String, n: int) -> void:
+func start_talk_n_unique(id: StringName, title: String, notes: String, n: int) -> void:
 	_start({
 		"id": id,
 		"title": title,
+		"notes": notes,
 		"type": Type.TALK_N_UNIQUE,
 		"state": "active",
 		"need": max(1, n),
@@ -68,10 +72,11 @@ func start_talk_n_unique(id: StringName, title: String, n: int) -> void:
 		"unique": {},
 	})
 
-func start_visit_area(id: StringName, title: String, area_id: StringName) -> void:
+func start_visit_area(id: StringName, title: String, notes: String, area_id: StringName) -> void:
 	_start({
 		"id": id,
 		"title": title,
+		"notes": notes,
 		"type": Type.VISIT_AREA,
 		"state": "active",
 		"target": area_id,
@@ -79,10 +84,11 @@ func start_visit_area(id: StringName, title: String, area_id: StringName) -> voi
 		"count": 0,
 	})
 
-func start_interact_object(id: StringName, title: String, object_id: StringName) -> void:
+func start_interact_object(id: StringName, title: String, notes: String, object_id: StringName) -> void:
 	_start({
 		"id": id,
 		"title": title,
+		"notes": notes,
 		"type": Type.INTERACT_OBJECT,
 		"state": "active",
 		"target": object_id,

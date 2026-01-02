@@ -35,18 +35,24 @@ func _refresh() -> void:
 		var r: Dictionary = Requests.requests[id]
 
 		var title: String = String(r.get("title", String(id)))
+		var notes: String = String(r.get("notes", ""))
 		var state: String = String(r.get("state", ""))
 
+		# Notes (shown next to title)
+		var notes_bb := ""
+		if notes.strip_edges() != "":
+			notes_bb = ": %s" % notes
+
 		# Optional progress suffix for count-based tasks
-		var suffix := ""
+		var progress_bb := ""
 		if r.has("need") and r.has("count"):
 			var need := int(r.get("need", 0))
 			var count := int(r.get("count", 0))
-			# Only show if it's actually meaningful
 			if need > 1:
-				suffix = " — [i]%d/%d[/i]" % [count, need]
+				progress_bb = "  [i](%d/%d)[/i]" % [count, need]
 
-		var bb := "[b]%s[/b]%s" % [title, suffix]
+		var bb := "[b][i]%s[/i][/b]%s%s" % [title, notes_bb, progress_bb]
+
 		var rtl := _make_rich_line(bb)
 
 		if state == "done":

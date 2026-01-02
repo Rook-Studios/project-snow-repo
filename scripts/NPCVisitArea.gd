@@ -29,6 +29,7 @@ signal talk_finished
 @export_group("Request Triggers")
 @export var start_visit_request_id: StringName = &""
 @export var start_visit_request_title: String = ""
+@export var start_visit_request_notes: String = ""
 @export var start_visit_area_id: StringName = &""
 
 @export_group("Request Dialogue Gating")
@@ -201,6 +202,8 @@ func _end_conversation() -> void:
 	_times_spoken += 1
 	_update_prompt()
 	talk_finished.emit()
+	
+	WorldState.inc_counter(&"npcs_talked_to")
 
 	if npc_id != StringName():
 		EventBus.emit_talked_to(npc_id)
@@ -209,6 +212,7 @@ func _end_conversation() -> void:
 		Requests.start_visit_area(
 			start_visit_request_id,
 			start_visit_request_title,
+			start_visit_request_notes,
 			start_visit_area_id
 		)
 

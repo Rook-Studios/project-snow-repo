@@ -82,7 +82,8 @@ voice_stream = ExtResource("9_6c0jo")
 voice_pitch_min = 0.6
 voice_pitch_max = 0.8
 start_visit_request_id = &"visit_square"
-start_visit_request_title = "Visit Town Square"
+start_visit_request_title = "Central Life"
+start_visit_request_notes = "Visit the Town Square"
 start_visit_area_id = &"town_square"
 request_id_for_this_npc = &"visit_square"
 after_request_done_intro = Array[String](["thank you for completing my quest"])
@@ -106,3 +107,19 @@ first_visit_intro = Array[String](["Hello! you should only be able to see me if 
 [node name="GateByWorldState" type="Node" parent="NPC_NoRequest2"]
 script = ExtResource("11_ww1o2")
 required_flag = &"visit_square"
+
+[node name="GateByWorldState2" type="Node" parent="NPC_NoRequest2"]
+script = ExtResource("11_ww1o2")
+required_counter = &"npcs_talked_to"
+counter_at_least = 3
+mode = 4
+
+[node name="NPC_NoRequest3" parent="." instance=ExtResource("9_uxy3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.407171, 1.99452, -6.35038)
+display_name = "Hidden Man 2"
+first_visit_intro = Array[String](["Hello! you should only be able to see me if you have spoken to both NPCs next to me."])
+
+[node name="GateByWorldState" type="Node" parent="NPC_NoRequest3"]
+script = ExtResource("11_ww1o2")
+required_counter = &"npcs_talked_to"
+counter_at_least = 2

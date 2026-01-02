@@ -31,7 +31,7 @@ layout_mode = 2
 [node name="ActiveLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[b]Active[/b]"
+text = "[b][u]Active[/u][/b]"
 fit_content = true
 
 [node name="ActiveList" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
@@ -45,7 +45,7 @@ layout_mode = 2
 [node name="CompletedLabel" type="RichTextLabel" parent="Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[b]Completed[/b]"
+text = "[b][u]Completed[/u][/b]"
 fit_content = true
 
 [node name="CompletedList" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]

@@ -196,6 +196,8 @@ func _end_conversation() -> void:
 	_times_spoken += 1
 	_update_prompt()
 	talk_finished.emit()
+	
+	WorldState.inc_counter(&"npcs_talked_to")
 
 	# Still emit talked_to so other request types can track it.
 	if npc_id != StringName():
