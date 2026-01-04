@@ -32,7 +32,7 @@ size = Vector3(1, 0.0372925, 1)
 
 [sub_resource type="Resource" id="Resource_bsn4f"]
 script = ExtResource("11_w3312")
-lines = Array[String](["I will now present you with a choice, to test the UI theming of the labels", "here is your choice, pick your favourite answer."])
+lines = Array[String](["I will now present you with a choice, to test the UI theming of the labels. i am also talking a lot more to allow for for for the impossibly fast word wrapping to work properly.", "here is your choice, pick your favourite answer."])
 choice_line_index = 1
 choice_labels = Array[String](["yes", "no, fug off"])
 followup_choice0 = Array[String](["ah you were nice to me. thank you."])

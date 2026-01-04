@@ -13,7 +13,7 @@ texture = ExtResource("4_4we25")
 
 [node name="DialogueUI" type="CanvasLayer" groups=["DialogueUI"]]
 script = ExtResource("1_fh07e")
-chars_per_second = 60.0
+chars_per_second = 50.0
 
 [node name="Panel" type="Panel" parent="."]
 texture_filter = 1

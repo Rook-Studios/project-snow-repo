@@ -13,10 +13,6 @@ signal choice_selected(line_index: int, choice_index: int)
 
 var _open := false
 var _just_opened := false
-var _reveal_ratio: float = 0.0
-var _total_chars: int = 0
-var _prev_revealed: int = 0
-
 
 # --- Typewriter settings ---
 @export var chars_per_second: float = 40.0
@@ -109,20 +105,147 @@ func is_open() -> bool:
 
 # --- Typewriter core (RichTextLabel + visible_characters) ---
 func _start_typing(text_bbcode: String) -> void:
-	_full_text_bbcode = text_bbcode
+	# Pre-wrap once so long words don't "kick" mid-reveal.
+	_full_text_bbcode = _prewrap_bbcode(text_bbcode)
 
+	_line.visible_characters = 0
 	_line.clear()
-	_line.bbcode_enabled = true
-	_line.text = _full_text_bbcode   # assign full text up-front (stable wrapping)
+	_line.append_text(_full_text_bbcode) # keep BBCode support
 
-	_total_chars = max(1, _line.get_total_character_count())
-	_reveal_ratio = 0.0
-	_line.visible_ratio = 0.0
-
-	_prev_revealed = 0
 	_char_accum = 0.0
 	_blip_counter = 0
 	_typing = true
+
+func _prewrap_bbcode(bbcode: String) -> String:
+	# If the label has no width yet, don't attempt wrapping.
+	var max_width := _line.size.x
+	if max_width <= 1.0:
+		return bbcode
+
+	var font := _line.get_theme_font(&"normal_font")
+	var font_size := _line.get_theme_font_size(&"normal_font_size")
+	if font == null or font_size <= 0:
+		return bbcode
+
+	# Use parsed (plain) text for measuring, but insert breaks back into BBCode.
+	var plain := _strip_bbcode(bbcode)
+
+	# Compute where line breaks should go in "visible character indices".
+	var break_indices := _compute_wrap_breaks(plain, max_width, font, font_size)
+	if break_indices.is_empty():
+		return bbcode
+
+	# Insert '\n' into the BBCode string at those visible-character indices,
+	# counting only "visible" characters (ignore tags like [b], [/color], etc).
+	return _insert_breaks_into_bbcode(bbcode, break_indices)
+
+
+func _strip_bbcode(s: String) -> String:
+	# Minimal BBCode stripper good enough for measurement.
+	# Removes [tags] but leaves the displayed text.
+	var out := ""
+	var in_tag := false
+	for i in s.length():
+		var ch := s[i]
+		if ch == "[":
+			in_tag = true
+			continue
+		if ch == "]" and in_tag:
+			in_tag = false
+			continue
+		if not in_tag:
+			out += ch
+	return out
+
+
+func _compute_wrap_breaks(text: String, max_width: float, font: Font, font_size: int) -> Array[int]:
+	# Returns an array of visible character indices where we should insert '\n'
+	# (indices are in terms of the plain text, not BBCode source).
+	var breaks: Array[int] = []
+
+	# Preserve explicit newlines if you already authored them.
+	var paragraphs := text.split("\n", false)
+
+	var global_index := 0
+	for p in paragraphs:
+		var words := p.split(" ", false)
+
+		var line := ""
+		var line_start_index := global_index
+
+		for w_i in range(words.size()):
+			var word := words[w_i]
+			var candidate := (word if line == "" else (line + " " + word))
+
+			if _text_width(candidate, font, font_size) <= max_width:
+				line = candidate
+			else:
+				# If the word itself doesn't fit on an empty line, we can't fix that without hyphenation.
+				# In that case, just start a new line and accept the overflow.
+				if line != "":
+					# Insert a break before this word (i.e. at current global index position).
+					var break_at := line_start_index + line.length()
+					breaks.append(break_at)
+
+					# New line starts after the space we would have added.
+					line_start_index = break_at + 1
+					line = word
+				else:
+					# Word too long even for empty line: keep it.
+					line = word
+
+		# Move global index forward for this paragraph + newline
+		global_index += p.length()
+		# Account for the '\n' we split on (except after last paragraph)
+		if paragraphs.size() > 1:
+			global_index += 1
+
+	return breaks
+
+
+func _text_width(s: String, font: Font, font_size: int) -> float:
+	var tl := TextLine.new()
+	tl.add_string(s, font, font_size)
+	return tl.get_line_width()
+
+
+func _insert_breaks_into_bbcode(bbcode: String, break_indices: Array[int]) -> String:
+	# break_indices are sorted insertion points in the *plain text character stream*
+	break_indices.sort()
+
+	var out := ""
+	var visible_idx := 0
+	var break_ptr := 0
+	var in_tag := false
+
+	for i in bbcode.length():
+		var ch := bbcode[i]
+
+		if ch == "[":
+			in_tag = true
+			out += ch
+			continue
+
+		if in_tag:
+			out += ch
+			if ch == "]":
+				in_tag = false
+			continue
+
+		# Before adding this visible char, insert any pending breaks at this index
+		while break_ptr < break_indices.size() and visible_idx == break_indices[break_ptr]:
+			out += "\n"
+			break_ptr += 1
+
+		out += ch
+		visible_idx += 1
+
+	# If a break is at the end, apply it
+	while break_ptr < break_indices.size() and visible_idx == break_indices[break_ptr]:
+		out += "\n"
+		break_ptr += 1
+
+	return out
 
 
 func _process(delta: float) -> void:
@@ -143,16 +266,20 @@ func _process(delta: float) -> void:
 	# pick cps based on fast mode
 	var cps := fast_mode_chars_per_second if _fast_mode else chars_per_second
 
-	# reveal_ratio increases by (characters per second) / (total chars)
-	_reveal_ratio += (cps / float(_total_chars)) * delta
-	_reveal_ratio = clamp(_reveal_ratio, 0.0, 1.0)
-	_line.visible_ratio = _reveal_ratio
+	_char_accum += cps * delta
+	var chars_to_add := int(_char_accum)
+	if chars_to_add <= 0:
+		return
+	_char_accum -= float(chars_to_add)
 
-	# Compute revealed character count for voice cadence + finish detection
-	var revealed := int(floor(_reveal_ratio * float(_total_chars)))
-	var added := revealed - _prev_revealed
-	_prev_revealed = revealed
+	var prev_visible := _line.visible_characters
+	var total := _line.get_total_character_count()  # excludes BBCode tags
+	var new_visible = min(prev_visible + chars_to_add, total)
+	_line.visible_characters = new_visible
 
+	# Voice blips cadence based on added visible chars
+	# Note: Ignoring spaces with BBCode is non-trivial; we use cadence here.
+	var added = new_visible - prev_visible
 	if added > 0 and _voice_enabled:
 		for i in range(added):
 			_blip_counter += 1
@@ -161,11 +288,11 @@ func _process(delta: float) -> void:
 				_voice.play()
 
 	# Finished this line?
-	if _reveal_ratio >= 1.0:
+	if new_visible >= total:
 		_typing = false
+		# auto-advance if fast mode is still held (choices will pause progression)
 		if _fast_mode and fast_mode_auto_advance and not choices_panel.visible and not _choices.visible:
 			_advance_or_close()
-
 
 # --- Advance / choices ---
 func _advance_or_close() -> void:
@@ -174,8 +301,7 @@ func _advance_or_close() -> void:
 
 	if _typing:
 		# snap to end of current line
-		_line.visible_ratio = 1.0
-		_reveal_ratio = 1.0
+		_line.visible_characters = _line.get_total_character_count()
 		_typing = false
 		return
 

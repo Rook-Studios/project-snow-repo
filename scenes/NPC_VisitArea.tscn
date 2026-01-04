@@ -22,6 +22,9 @@ mesh = SubResource("CapsuleMesh_37i88")
 [node name="Prompt3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32612, 0)
 billboard = 1
+alpha_cut = 1
+modulate = Color(0.439216, 0.176471, 0.0862745, 1)
+outline_modulate = Color(0.0705882, 0.027451, 0.0117647, 1)
 text = "Press E to talk"
 font = ExtResource("2_k81md")
 outline_size = 24
