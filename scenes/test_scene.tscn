@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=19 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
@@ -12,7 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://dv58nnay3x7eo" path="res://scenes/NPC_NoRequest.tscn" id="9_uxy3f"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="11_w3312"]
 [ext_resource type="Script" path="res://scripts/GateByWorldState.gd" id="11_ww1o2"]
-[ext_resource type="Texture2D" uid="uid://b4irnf78d1gb0" path="res://assets/test-assets/text_box_icon_test.png" id="13_uyoxu"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -140,8 +139,3 @@ first_visit_intro = Array[String](["Hello! you should only be able to see me if 
 script = ExtResource("11_ww1o2")
 required_counter = &"npcs_talked_to"
 counter_at_least = 2
-
-[node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(-0.0416838, 0, -0.999131, 0, 1, 0, 0.999131, 0, -0.0416838, 1.17095, 2.54285, -1.21984)
-pixel_size = 0.02
-texture = ExtResource("13_uyoxu")

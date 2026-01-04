@@ -125,6 +125,16 @@ func _ready() -> void:
 			ui.opened.connect(_on_dialogue_opened)
 		if not ui.closed.is_connected(_on_dialogue_closed):
 			ui.closed.connect(_on_dialogue_closed)
+	
+		# Find JournalUI and connect to its signals (group it similarly or just search by node name/group)
+	var journal_nodes := get_tree().get_nodes_in_group("JournalUI")
+	if journal_nodes.size() > 0:
+		var j = journal_nodes[0]
+		if not j.opened.is_connected(_on_journal_opened):
+			j.opened.connect(_on_journal_opened)
+		if not j.closed.is_connected(_on_journal_closed):
+			j.closed.connect(_on_journal_closed)
+
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -258,6 +268,7 @@ func _physics_process(delta: float) -> void:
 		
 	# 8) Controller input searching
 	_apply_controller_look(delta)
+	
 
 
 func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
@@ -388,3 +399,13 @@ func _apply_controller_look(delta: float) -> void:
 	_pitch = clamp(_pitch, min_p, max_p)
 
 	_apply_pivot_rotation()
+
+
+func _on_journal_opened() -> void:
+	set_controls_enabled(false)
+	# Keep mouse visible for UI, or hide if you're fully controller-only
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func _on_journal_closed() -> void:
+	set_controls_enabled(true)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

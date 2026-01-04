@@ -1,5 +1,8 @@
 extends CanvasLayer
 
+signal opened
+signal closed
+
 @onready var _active: VBoxContainer    = $Panel/MarginContainer/VBoxContainer/ActiveList
 @onready var _completed: VBoxContainer = $Panel/MarginContainer/VBoxContainer/CompletedList
 
@@ -18,7 +21,20 @@ func _ready() -> void:
 func _unhandled_input(e: InputEvent) -> void:
 	if e.is_action_pressed(toggle_action):
 		visible = !visible
+
+		if visible:
+			opened.emit()
+		else:
+			closed.emit()
+
 		get_viewport().set_input_as_handled()
+		return
+
+	# If journal is open, swallow all input so NPCs / world don't receive it.
+	if visible:
+		get_viewport().set_input_as_handled()
+
+
 
 func _on_requests_changed(_id: StringName) -> void:
 	_refresh()

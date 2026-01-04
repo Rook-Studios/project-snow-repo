@@ -13,6 +13,10 @@ signal choice_selected(line_index: int, choice_index: int)
 
 var _open := false
 var _just_opened := false
+var _reveal_ratio: float = 0.0
+var _total_chars: int = 0
+var _prev_revealed: int = 0
+
 
 # --- Typewriter settings ---
 @export var chars_per_second: float = 40.0
@@ -106,12 +110,20 @@ func is_open() -> bool:
 # --- Typewriter core (RichTextLabel + visible_characters) ---
 func _start_typing(text_bbcode: String) -> void:
 	_full_text_bbcode = text_bbcode
-	_line.visible_characters = 0
+
 	_line.clear()
-	_line.append_text(_full_text_bbcode) # supports [b], [i], [color], etc.
+	_line.bbcode_enabled = true
+	_line.text = _full_text_bbcode   # assign full text up-front (stable wrapping)
+
+	_total_chars = max(1, _line.get_total_character_count())
+	_reveal_ratio = 0.0
+	_line.visible_ratio = 0.0
+
+	_prev_revealed = 0
 	_char_accum = 0.0
 	_blip_counter = 0
 	_typing = true
+
 
 func _process(delta: float) -> void:
 	if not _open:
@@ -131,20 +143,16 @@ func _process(delta: float) -> void:
 	# pick cps based on fast mode
 	var cps := fast_mode_chars_per_second if _fast_mode else chars_per_second
 
-	_char_accum += cps * delta
-	var chars_to_add := int(_char_accum)
-	if chars_to_add <= 0:
-		return
-	_char_accum -= float(chars_to_add)
+	# reveal_ratio increases by (characters per second) / (total chars)
+	_reveal_ratio += (cps / float(_total_chars)) * delta
+	_reveal_ratio = clamp(_reveal_ratio, 0.0, 1.0)
+	_line.visible_ratio = _reveal_ratio
 
-	var prev_visible := _line.visible_characters
-	var total := _line.get_total_character_count()  # excludes BBCode tags
-	var new_visible = min(prev_visible + chars_to_add, total)
-	_line.visible_characters = new_visible
+	# Compute revealed character count for voice cadence + finish detection
+	var revealed := int(floor(_reveal_ratio * float(_total_chars)))
+	var added := revealed - _prev_revealed
+	_prev_revealed = revealed
 
-	# Voice blips cadence based on added visible chars
-	# Note: Ignoring spaces with BBCode is non-trivial; we use cadence here.
-	var added = new_visible - prev_visible
 	if added > 0 and _voice_enabled:
 		for i in range(added):
 			_blip_counter += 1
@@ -153,11 +161,11 @@ func _process(delta: float) -> void:
 				_voice.play()
 
 	# Finished this line?
-	if new_visible >= total:
+	if _reveal_ratio >= 1.0:
 		_typing = false
-		# auto-advance if fast mode is still held (choices will pause progression)
 		if _fast_mode and fast_mode_auto_advance and not choices_panel.visible and not _choices.visible:
 			_advance_or_close()
+
 
 # --- Advance / choices ---
 func _advance_or_close() -> void:
@@ -166,7 +174,8 @@ func _advance_or_close() -> void:
 
 	if _typing:
 		# snap to end of current line
-		_line.visible_characters = _line.get_total_character_count()
+		_line.visible_ratio = 1.0
+		_reveal_ratio = 1.0
 		_typing = false
 		return
 

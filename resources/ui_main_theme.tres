@@ -1,23 +1,11 @@
-[gd_resource type="Theme" load_steps=9 format=3 uid="uid://ujvnsi28r4ks"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://ujvnsi28r4ks"]
 
 [ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/Daydream DEMO.otf" id="1_o4vvx"]
-[ext_resource type="Texture2D" uid="uid://b4irnf78d1gb0" path="res://assets/test-assets/text_box_icon_test.png" id="2_dnsk8"]
+[ext_resource type="Texture2D" uid="uid://dpt5h1rtspdeo" path="res://assets/test-assets/text_box_icon_test_2.png" id="2_56jai"]
 [ext_resource type="FontFile" uid="uid://cyoqwih45m8h8" path="res://resources/GrapeSoda.ttf" id="2_qnxum"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pohu6"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_806ry"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kuihk"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gyl3x"]
-
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nf8g5"]
-texture = ExtResource("2_dnsk8")
-texture_margin_left = 8.0
-texture_margin_top = 8.0
-texture_margin_right = 8.0
-texture_margin_bottom = 8.0
+texture = ExtResource("2_56jai")
 
 [resource]
 Button/colors/font_color = Color(0.439216, 0.176471, 0.0862745, 1)
@@ -29,10 +17,6 @@ Button/colors/font_pressed_color = Color(0.26, 0.0845, 0.026, 1)
 Button/constants/outline_size = 16
 Button/font_sizes/font_size = 24
 Button/fonts/font = ExtResource("1_o4vvx")
-Button/styles/focus = SubResource("StyleBoxTexture_pohu6")
-Button/styles/hover = SubResource("StyleBoxTexture_806ry")
-Button/styles/normal = SubResource("StyleBoxTexture_kuihk")
-Button/styles/pressed = SubResource("StyleBoxTexture_gyl3x")
 Label/colors/font_color = Color(0.439216, 0.176471, 0.0862745, 1)
 Label/colors/font_outline_color = Color(0.0705882, 0.027451, 0.0117647, 1)
 Label/constants/outline_size = 24
