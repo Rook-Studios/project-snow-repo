@@ -2,10 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
 [ext_resource type="Material" uid="uid://d0bs16873pgbx" path="res://resources/pixelate.tres" id="2_4x2xr"]
+[ext_resource type="Texture2D" uid="uid://oaqh8fbaupkx" path="res://assets/test-assets/icon.svg" id="3_at543"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_pmn0q"]
 
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
 floor_max_angle = 0.802851
@@ -20,9 +19,6 @@ camera_sway_enabled = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_6esgl")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_pmn0q")
 
 [node name="Pivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
@@ -41,3 +37,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1.48441, 0, 0, 0, 1.48441, 0, 0, 0, 1.48441, 0, 0, 0)
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
+texture = ExtResource("3_at543")
