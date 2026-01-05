@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://ujvnsi28r4ks"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://ujvnsi28r4ks"]
 
 [ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/Daydream DEMO.otf" id="1_o4vvx"]
 [ext_resource type="Texture2D" uid="uid://dpt5h1rtspdeo" path="res://assets/test-assets/text_box_icon_test_2.png" id="2_56jai"]
@@ -6,6 +6,9 @@
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nf8g5"]
 texture = ExtResource("2_56jai")
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0j4bg"]
+content_margin_left = 16.0
 
 [resource]
 Button/colors/font_color = Color(0.439216, 0.176471, 0.0862745, 1)
@@ -34,3 +37,4 @@ RichTextLabel/fonts/bold_font = ExtResource("1_o4vvx")
 RichTextLabel/fonts/bold_italics_font = ExtResource("1_o4vvx")
 RichTextLabel/fonts/italics_font = ExtResource("1_o4vvx")
 RichTextLabel/fonts/normal_font = ExtResource("2_qnxum")
+RichTextLabel/styles/normal = SubResource("StyleBoxEmpty_0j4bg")

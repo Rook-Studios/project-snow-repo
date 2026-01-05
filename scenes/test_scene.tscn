@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=24 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
@@ -9,9 +9,12 @@
 [ext_resource type="PackedScene" uid="uid://b5lqtjua380wj" path="res://scenes/NPC_VisitArea.tscn" id="8_pjseh"]
 [ext_resource type="PackedScene" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="9_6c0jo"]
-[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPC_NoRequest.tscn" id="9_uxy3f"]
+[ext_resource type="Script" path="res://scripts/NPCBase.gd" id="9_dky0q"]
+[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPC_Base.tscn" id="9_uxy3f"]
+[ext_resource type="Script" path="res://scripts/components/StartAreaVisitRequest.gd" id="11_pmad2"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="11_w3312"]
-[ext_resource type="Script" path="res://scripts/GateByWorldState.gd" id="11_ww1o2"]
+[ext_resource type="Script" path="res://scripts/components/GateByWorldState.gd" id="11_ww1o2"]
+[ext_resource type="Script" path="res://scripts/components/StartTalkToNPCRequest.gd" id="15_5f2en"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -46,6 +49,34 @@ show_on_repeat_visits = false
 play_once = false
 block_id = &""
 
+[sub_resource type="Resource" id="Resource_lrvrr"]
+script = ExtResource("11_w3312")
+lines = Array[String](["this block should only appear after you have completed my friend's [tornado]quest[/tornado], regardless of whether or not you have spoken to me before"])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
+[sub_resource type="Resource" id="Resource_r4jyv"]
+script = ExtResource("11_w3312")
+lines = Array[String](["you completed the request! well done :)"])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
 [node name="test-scene" type="Node3D"]
 script = ExtResource("1_skq1x")
 
@@ -58,7 +89,7 @@ shadow_enabled = true
 shadow_blur = 0.1
 
 [node name="test-ground" type="MeshInstance3D" parent="."]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+transform = Transform3D(14.2382, 0, 0, 0, 14.2382, 0, 0, 0, 14.2382, 0, 0, 0)
 mesh = SubResource("PlaneMesh_nuf3y")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="test-ground"]
@@ -92,18 +123,24 @@ area_id = &"town_square"
 
 [node name="NPC_VisitArea" parent="." instance=ExtResource("8_pjseh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.780439, 1.56536, -3.80945)
-npc_id = &"villager_1"
-first_visit_intro = Array[String](["hello. here is a quest"])
-repeat_intro = Array[String](["hello."])
+script = ExtResource("9_dky0q")
+npc_id = &"villager"
+first_visit_intro = Array[String](["hello here is a quest. visit the big ominous red square for no reason at all."])
+repeat_intro = Array[String](["go do the thing you fat neek"])
 voice_stream = ExtResource("9_6c0jo")
-voice_pitch_min = 0.6
-voice_pitch_max = 0.8
-start_visit_request_id = &"visit_square"
-start_visit_request_title = " Central Life"
-start_visit_request_notes = "Visit the Town Square"
-start_visit_area_id = &"town_square"
+voice_pitch_min = 0.59
+voice_pitch_max = 1.075
+voice_blip_every = 3
+prompt_verb = "Receive Quest"
 request_id_for_this_npc = &"visit_square"
-after_request_done_intro = Array[String](["thank you for completing my quest"])
+after_request_done_intro = Array[String](["thank you for completing my quest."])
+
+[node name="StartAreaVisitRequest" type="Node" parent="NPC_VisitArea"]
+script = ExtResource("11_pmad2")
+start_visit_request_id = &"visit_square"
+start_visit_request_title = "Central Life 2"
+start_visit_request_notes = "visit the red square"
+start_visit_area_id = &"town_square"
 
 [node name="NPC_NoRequest" parent="." instance=ExtResource("9_uxy3f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02439, 1.56536, -1.05029)
@@ -116,10 +153,12 @@ voice_stream = ExtResource("9_6c0jo")
 voice_blip_every = 1
 request_id_for_this_npc = &"visit_square"
 after_request_done_intro = Array[String](["you have completed my friend's quest. well done."])
+after_request_done_blocks = Array[ExtResource("11_w3312")]([SubResource("Resource_lrvrr")])
 
 [node name="NPC_NoRequest2" parent="." instance=ExtResource("9_uxy3f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.26619, 1.99452, -6.22049)
 display_name = "Hidden Man"
+npc_id = &"hidden_man"
 first_visit_intro = Array[String](["Hello! you should only be able to see me if you have completed the [img=48x48]res://assets/test-assets/icon.svg[/img] [color=blue]quest.[/color]"])
 
 [node name="GateByWorldState" type="Node" parent="NPC_NoRequest2"]
@@ -135,9 +174,41 @@ mode = 4
 [node name="NPC_NoRequest3" parent="." instance=ExtResource("9_uxy3f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.407171, 1.99452, -6.35038)
 display_name = "Hidden Man 2"
+npc_id = &"hidden_man_2"
 first_visit_intro = Array[String](["Hello! you should only be able to see me if you have spoken to both NPCs next to me."])
 
 [node name="GateByWorldState" type="Node" parent="NPC_NoRequest3"]
 script = ExtResource("11_ww1o2")
 required_counter = &"npcs_talked_to"
+counter_at_least = 2
+
+[node name="NPC_Base2" parent="." instance=ExtResource("9_uxy3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5489, 1.50466, -6.12228)
+display_name = "Friend"
+npc_id = &"friend"
+first_visit_intro = Array[String](["hello! have you met my friend? i was told you'd come and talk to me :)"])
+repeat_intro = Array[String](["hi friend!"])
+request_id_for_this_npc = &"visit_friend"
+after_request_done_intro = Array[String](["hi again friend!"])
+after_request_done_blocks = Array[ExtResource("11_w3312")]([SubResource("Resource_r4jyv")])
+
+[node name="NPC_Base" parent="." instance=ExtResource("9_uxy3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.58803, 1.70726, -9.49239)
+display_name = "Talkative Man"
+npc_id = &"talkative_man"
+first_visit_intro = Array[String](["hi there. i am talkative man. i love to talk. go see my [img=48x48]res://assets/test-assets/icon.svg[/img] [color=gold]friend [/color]over there"])
+
+[node name="StartTalkToNPCRequest" type="Node" parent="NPC_Base"]
+script = ExtResource("15_5f2en")
+request_id = &"visit_friend"
+title = "social"
+notes = "talk to talkative man's friend"
+target_npc_id = &"friend"
+
+[node name="NPC_Base3" parent="." instance=ExtResource("9_uxy3f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.41406, 1.55356, 2.65621)
+
+[node name="GateByWorldState" type="Node" parent="NPC_Base3"]
+script = ExtResource("11_ww1o2")
+required_counter = &"requests_completed"
 counter_at_least = 2

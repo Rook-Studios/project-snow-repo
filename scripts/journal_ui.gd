@@ -5,9 +5,7 @@ signal closed
 
 @onready var _active: VBoxContainer    = $Panel/MarginContainer/VBoxContainer/ActiveList
 @onready var _completed: VBoxContainer = $Panel/MarginContainer/VBoxContainer/CompletedList
-
 @export var toggle_action: StringName = &"journal"
-
 func _ready() -> void:
 	visible = false
 

@@ -1,11 +1,9 @@
-# res://scripts/npc/NPCNoRequest.gd
+# res://scripts/npc/NPCBase.gd
 extends Node3D
-class_name NPCNoRequest
+class_name NPCBase
 
 signal talk_started
 signal talk_finished
-
-
 
 @export_group("Identity")
 @export var display_name: String = "Villager"
@@ -52,7 +50,6 @@ var _talk_blocks: Array[DialogueBlock] = []
 # memory for play_once blocks
 var _played_once: Dictionary = {}
 
-
 func _ready() -> void:
 	_prompt.visible = false
 	_update_prompt_text()
@@ -76,7 +73,6 @@ func _ready() -> void:
 				_update_prompt()
 		)
 
-
 func _process(_delta: float) -> void:
 	if _player_in and not _talking:
 		_update_prompt()
@@ -99,6 +95,7 @@ func _start_conversation() -> void:
 		return
 
 	_talking = true
+	talk_started.emit()
 	choice_reset()
 	_update_prompt()
 
@@ -199,27 +196,21 @@ func _end_conversation() -> void:
 	_talking = false
 	_times_spoken += 1
 	_update_prompt()
-	talk_finished.emit()
-	
-		# Count unique NPCs talked to (only once per npc_id)
+
+	# Count unique NPCs talked to (only once per npc_id)
 	if npc_id != StringName() and WorldState != null:
 		var talked_flag := StringName("talked_to_" + String(npc_id))
 		if not WorldState.has_flag(talked_flag):
 			WorldState.set_flag(talked_flag)
 			WorldState.inc_counter(&"npcs_talked_to")
 
-	# Still emit the event every time (useful for repeat-reactive requests),
-	# OR make it once-only too if you prefer.
+	# Emit the event once (fixes the double-emit issue)
 	if npc_id != StringName():
 		EventBus.emit_talked_to(npc_id)
 
-
-	# Still emit talked_to so other request types can track it.
-	if npc_id != StringName():
-		EventBus.emit_talked_to(npc_id)
+	talk_finished.emit()
 
 # --- block filtering ---
-
 func _get_blocks_for_this_talk() -> Array[DialogueBlock]:
 	var source := blocks
 	if _times_spoken > 0 and repeat_blocks_override.size() > 0:
@@ -254,7 +245,6 @@ func _mark_played_if_once(blk: DialogueBlock) -> void:
 		_played_once[_block_key(blk)] = true
 
 # --- helpers ---
-
 func _ui() -> Node:
 	for n in get_tree().get_nodes_in_group("DialogueUI"):
 		return n
