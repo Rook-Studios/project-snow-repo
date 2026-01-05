@@ -2,21 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg63whaitvj4n"
-path.s3tc="res://.godot/imported/test_journal_icon.png-46274365de95df555115286f5c380862.s3tc.ctex"
+uid="uid://cfs12tcw7r8g3"
+path="res://.godot/imported/skybox_test.png-ee3abd659d585aacdb81592fc093b3b0.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/test-assets/test_journal_icon.png"
-dest_files=["res://.godot/imported/test_journal_icon.png-46274365de95df555115286f5c380862.s3tc.ctex"]
+source_file="res://assets/test-assets/skybox_test.png"
+dest_files=["res://.godot/imported/skybox_test.png-ee3abd659d585aacdb81592fc093b3b0.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
@@ -24,7 +23,7 @@ compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
-roughness/mode=0
+roughness/mode=1
 roughness/src_normal=""
 process/fix_alpha_border=true
 process/premult_alpha=false

@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://4risjssarmes"]
+
+[ext_resource type="Shader" path="res://resources/skybox.gdshader" id="1_ut75n"]
+[ext_resource type="Texture2D" uid="uid://cfs12tcw7r8g3" path="res://assets/test-assets/skybox_test.png" id="2_7imvj"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ut75n")
+shader_parameter/lock_aspect = false
+shader_parameter/aspect_ratio = 1.33333
+shader_parameter/fov = Vector2(180, 90)
+shader_parameter/tiling = Vector2i(1, 1)
+shader_parameter/offset = Vector2(0, 0)
+shader_parameter/sky_texture = ExtResource("2_7imvj")

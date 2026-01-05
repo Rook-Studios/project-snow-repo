@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dw15b2l84k7ro"]
+[gd_scene load_steps=5 format=3 uid="uid://b5lqtjua380wj"]
 
 [ext_resource type="Script" path="res://scripts/NPCVisitArea.gd" id="1_cbusr"]
 [ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/Daydream DEMO.otf" id="2_k81md"]

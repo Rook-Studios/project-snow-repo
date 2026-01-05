@@ -197,7 +197,18 @@ func _end_conversation() -> void:
 	_update_prompt()
 	talk_finished.emit()
 	
-	WorldState.inc_counter(&"npcs_talked_to")
+		# Count unique NPCs talked to (only once per npc_id)
+	if npc_id != StringName() and WorldState != null:
+		var talked_flag := StringName("talked_to_" + String(npc_id))
+		if not WorldState.has_flag(talked_flag):
+			WorldState.set_flag(talked_flag)
+			WorldState.inc_counter(&"npcs_talked_to")
+
+	# Still emit the event every time (useful for repeat-reactive requests),
+	# OR make it once-only too if you prefer.
+	if npc_id != StringName():
+		EventBus.emit_talked_to(npc_id)
+
 
 	# Still emit talked_to so other request types can track it.
 	if npc_id != StringName():

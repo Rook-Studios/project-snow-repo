@@ -5,11 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="2_2osio"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
-[ext_resource type="PackedScene" uid="uid://5v2aqywejkmt" path="res://scenes/request_toast.tscn" id="6_thq7k"]
-[ext_resource type="PackedScene" uid="uid://dw15b2l84k7ro" path="res://scenes/NPC_VisitArea.tscn" id="8_pjseh"]
-[ext_resource type="PackedScene" uid="uid://74j7cmqt1e84" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
+[ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="6_thq7k"]
+[ext_resource type="PackedScene" uid="uid://b5lqtjua380wj" path="res://scenes/NPC_VisitArea.tscn" id="8_pjseh"]
+[ext_resource type="PackedScene" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="9_6c0jo"]
-[ext_resource type="PackedScene" uid="uid://dv58nnay3x7eo" path="res://scenes/NPC_NoRequest.tscn" id="9_uxy3f"]
+[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPC_NoRequest.tscn" id="9_uxy3f"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="11_w3312"]
 [ext_resource type="Script" path="res://scripts/GateByWorldState.gd" id="11_ww1o2"]
 
@@ -24,6 +24,8 @@ sky_material = SubResource("ProceduralSkyMaterial_chb0x")
 [sub_resource type="Environment" id="Environment_uj03q"]
 background_mode = 2
 sky = SubResource("Sky_h6w6j")
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_nuf3y"]
 
