@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://b5xhwx0w58u0h"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
-[ext_resource type="Material" uid="uid://d0bs16873pgbx" path="res://resources/pixelate.tres" id="2_4x2xr"]
+[ext_resource type="Material" uid="uid://d0bs16873pgbx" path="res://resources/shaders/pixelate.tres" id="2_4x2xr"]
 [ext_resource type="Texture2D" uid="uid://oaqh8fbaupkx" path="res://assets/test-assets/icon.svg" id="3_at543"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]

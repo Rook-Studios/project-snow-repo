@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://h7kbtycsnk26"]
 
 [ext_resource type="Script" path="res://scripts/NPCBase.gd" id="1_mhn3x"]
-[ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/Daydream DEMO.otf" id="2_ehy45"]
+[ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/fonts/Daydream DEMO.otf" id="2_ehy45"]
 [ext_resource type="Texture2D" uid="uid://oaqh8fbaupkx" path="res://assets/test-assets/icon.svg" id="3_rka0d"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_xemqk"]

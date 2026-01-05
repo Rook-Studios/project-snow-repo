@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://d2chhmym26fba"
-path="res://.godot/imported/sd_auto_pilot.ttf-ceee3be90657b6e342e0d796950c95eb.fontdata"
+uid="uid://dptnbpt5pt4jn"
+path="res://.godot/imported/Daydream DEMO.otf-126dadbc19fac68f661b868286f28da0.fontdata"
 
 [deps]
 
-source_file="res://resources/sd_auto_pilot.ttf"
-dest_files=["res://.godot/imported/sd_auto_pilot.ttf-ceee3be90657b6e342e0d796950c95eb.fontdata"]
+source_file="res://resources/fonts/Daydream DEMO.otf"
+dest_files=["res://.godot/imported/Daydream DEMO.otf-126dadbc19fac68f661b868286f28da0.fontdata"]
 
 [params]
 

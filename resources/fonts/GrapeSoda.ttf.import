@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://dptnbpt5pt4jn"
-path="res://.godot/imported/Daydream DEMO.otf-cf2a7f0df4146aa19985c591c7d633a1.fontdata"
+uid="uid://cyoqwih45m8h8"
+path="res://.godot/imported/GrapeSoda.ttf-584d788d8efc0e2dcb0619919b6b8c58.fontdata"
 
 [deps]
 
-source_file="res://resources/Daydream DEMO.otf"
-dest_files=["res://.godot/imported/Daydream DEMO.otf-cf2a7f0df4146aa19985c591c7d633a1.fontdata"]
+source_file="res://resources/fonts/GrapeSoda.ttf"
+dest_files=["res://.godot/imported/GrapeSoda.ttf-584d788d8efc0e2dcb0619919b6b8c58.fontdata"]
 
 [params]
 

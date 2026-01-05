@@ -17,18 +17,17 @@ config/icon="res://assets/test-assets/icon.svg"
 
 [autoload]
 
-QuestManager="*res://scripts/QuestManager.gd"
-InputHints="*res://scripts/InputHints.gd"
-EventBus="*res://scripts/EventBus.gd"
-Requests="*res://scripts/Requests.gd"
-WorldState="*res://scripts/WorldState.gd"
+InputHints="*res://scripts/autoloads/InputHints.gd"
+EventBus="*res://scripts/autoloads/EventBus.gd"
+Requests="*res://scripts/autoloads/Requests.gd"
+WorldState="*res://scripts/autoloads/WorldState.gd"
 
 [display]
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/size/mode=4
-mouse_cursor/custom_image="res://assets/cursor.png"
+mouse_cursor/custom_image="res://assets/ui/cursor.png"
 
 [file_customization]
 

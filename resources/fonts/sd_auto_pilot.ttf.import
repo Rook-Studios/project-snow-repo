@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://c1wlgwafi75c"
-path="res://.godot/imported/CutePixel.ttf-1573a4b837fbb3d35e626ec3a9021fe0.fontdata"
+uid="uid://d2chhmym26fba"
+path="res://.godot/imported/sd_auto_pilot.ttf-e418f59be35e70c6d282a833c43a2d60.fontdata"
 
 [deps]
 
-source_file="res://resources/CutePixel.ttf"
-dest_files=["res://.godot/imported/CutePixel.ttf-1573a4b837fbb3d35e626ec3a9021fe0.fontdata"]
+source_file="res://resources/fonts/sd_auto_pilot.ttf"
+dest_files=["res://.godot/imported/sd_auto_pilot.ttf-e418f59be35e70c6d282a833c43a2d60.fontdata"]
 
 [params]
 
