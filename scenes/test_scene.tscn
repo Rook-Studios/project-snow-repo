@@ -120,7 +120,7 @@ after_request_done_intro = Array[String](["you have completed my friend's quest.
 [node name="NPC_NoRequest2" parent="." instance=ExtResource("9_uxy3f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.26619, 1.99452, -6.22049)
 display_name = "Hidden Man"
-first_visit_intro = Array[String](["Hello! you should only be able to see me if you have completed the quest."])
+first_visit_intro = Array[String](["Hello! you should only be able to see me if you have completed the [img=48x48]res://assets/test-assets/icon.svg[/img] [color=blue]quest.[/color]"])
 
 [node name="GateByWorldState" type="Node" parent="NPC_NoRequest2"]
 script = ExtResource("11_ww1o2")

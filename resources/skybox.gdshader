@@ -15,14 +15,14 @@ void vertex() {
 	// Camera YX rotation per Basis.get_euler source code
 	float y = atan(VIEW_MATRIX[0][2], VIEW_MATRIX[2][2]);
 	float x = asin(VIEW_MATRIX[1][2]);
-	
+
 	// Map rotation to screen space
 	bg_coords.xy = vec2(y * -0.5, x) / PI;
 	bg_coords.y += 0.5;
-	
+
 	bg_coords.w = fov.y / 180.0;
 	bg_coords.z = !lock_aspect ? fov.x / 360.0 : VIEWPORT_SIZE.x / (VIEWPORT_SIZE.y * aspect_ratio) * bg_coords.w;
-	
+
 	// Keep background centered vertically when FOV changes
 	bg_coords.y *= bg_coords.w > 1.0 ? 0.0 : 1.0 - bg_coords.w;
 }

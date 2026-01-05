@@ -5,6 +5,8 @@ class_name NPCNoRequest
 signal talk_started
 signal talk_finished
 
+
+
 @export_group("Identity")
 @export var display_name: String = "Villager"
 @export var npc_id: StringName = &""
@@ -33,6 +35,7 @@ signal talk_finished
 
 @onready var _zone: Area3D = $InteractZone
 @onready var _prompt: Label3D = $Prompt3D
+@onready var _sprite: Sprite3D = $Sprite3D
 
 var _player_in := false
 var _player_body: CharacterBody3D = null
@@ -72,6 +75,7 @@ func _ready() -> void:
 				_player_in = false
 				_update_prompt()
 		)
+
 
 func _process(_delta: float) -> void:
 	if _player_in and not _talking:

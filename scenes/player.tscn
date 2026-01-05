@@ -40,7 +40,7 @@ mouse_filter = 2
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1.48441, 0, 0, 0, 1.48441, 0, 0, 0, 1.48441, 0, 0, 0)
-billboard = 1
+billboard = 2
 alpha_cut = 1
 texture_filter = 0
 texture = ExtResource("3_at543")
