@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://b5xhwx0w58u0h"]
+[gd_scene load_steps=12 format=3 uid="uid://b5xhwx0w58u0h"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
 [ext_resource type="Material" uid="uid://d0bs16873pgbx" path="res://resources/shaders/pixelate.tres" id="2_4x2xr"]
 [ext_resource type="Texture2D" uid="uid://7tkht8cs06kr" path="res://assets/player/player_sheet.png" id="3_01ab7"]
+[ext_resource type="FontFile" uid="uid://c1wlgwafi75c" path="res://resources/fonts/CutePixel.ttf" id="4_cpe0a"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]
 height = 1.44742
@@ -115,7 +116,7 @@ tracks/3/keys = {
 
 [sub_resource type="Animation" id="Animation_8icxh"]
 resource_name = "walk"
-length = 0.45
+length = 0.3
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -160,7 +161,7 @@ tracks/3/path = NodePath(".:frame")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.2),
+"times": PackedFloat32Array(0, 0.15),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [1, 0]
@@ -272,3 +273,13 @@ hframes = 2
 libraries = {
 "": SubResource("AnimationLibrary_hs5d4")
 }
+
+[node name="debug" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.73308, 0)
+visible = false
+billboard = 1
+font = ExtResource("4_cpe0a")
+font_size = 64
+
+[node name="ray" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.621541, 0)

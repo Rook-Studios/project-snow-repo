@@ -1,9 +1,9 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://d0bs16873pgbx"]
 
-[ext_resource type="Shader" path="res://resources/shaders/pixelate.gdshader" id="1_8cqrk"]
+[ext_resource type="Shader" path="res://resources/shaders/pixelate.gdshader" id="1_br5hs"]
 
 [resource]
-shader = ExtResource("1_8cqrk")
-shader_parameter/pixel_size = 3.0
+shader = ExtResource("1_br5hs")
+shader_parameter/pixel_size = 1.0
 shader_parameter/color_steps = 32.0
-shader_parameter/dithering_enabled = true
+shader_parameter/dithering_enabled = false

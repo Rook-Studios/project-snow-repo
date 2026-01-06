@@ -79,6 +79,8 @@ var _pitch := 0.0
 var _orient_ref: Node3D
 @onready var sprite = $Sprite3D
 @onready var anim = $Sprite3D/AnimationPlayer
+@onready var debug = $debug
+@onready var ray = $ray
 
 var _target_arm_length: float = 0.0
 var _bob_phase: float = 0.0
@@ -275,11 +277,10 @@ func _physics_process(delta: float) -> void:
 	# 9) Animations
 	if not controls_enabled:
 		anim.play("idle")
-	elif not is_on_floor():
+	elif not ray.is_colliding():
 		anim.play("jump")
 	else:
 		var horizontal_speed := Vector2(velocity.x, velocity.z).length()
-		#print(horizontal_speed)
 		if horizontal_speed > 1.0:
 			anim.play("walk")
 		else:
