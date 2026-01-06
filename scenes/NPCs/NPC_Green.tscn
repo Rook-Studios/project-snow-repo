@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dnw722ljcfa5t"]
+
+[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPCs/NPC_Base.tscn" id="1_5141l"]
+
+[node name="NPC_Green" instance=ExtResource("1_5141l")]
+
+[node name="Sprite3D" parent="." index="3"]
+modulate = Color(0.184314, 1, 0.152941, 1)

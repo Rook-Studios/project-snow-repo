@@ -69,6 +69,7 @@ extends CharacterBody3D
 @export_category("Orientation")
 @export var orientation_node: NodePath
 
+
 var _yaw := 0.0
 var _pitch := 0.0
 
@@ -76,6 +77,8 @@ var _pitch := 0.0
 @onready var _spring: SpringArm3D = $Pivot/SpringArm3D
 @onready var _camera: Camera3D = $Pivot/SpringArm3D/Camera3D
 var _orient_ref: Node3D
+@onready var sprite = $Sprite3D
+@onready var anim = $Sprite3D/AnimationPlayer
 
 var _target_arm_length: float = 0.0
 var _bob_phase: float = 0.0
@@ -269,6 +272,25 @@ func _physics_process(delta: float) -> void:
 	# 8) Controller input searching
 	_apply_controller_look(delta)
 	
+	# 9) Animations
+	if not controls_enabled:
+		anim.play("idle")
+	elif not is_on_floor():
+		anim.play("jump")
+	else:
+		var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+		#print(horizontal_speed)
+		if horizontal_speed > 1.0:
+			anim.play("walk")
+		else:
+			anim.play("idle")
+	
+	# 10) Sprite Flipping
+	if controls_enabled:
+		if Input.is_action_just_pressed("move_left"):
+			sprite.flip_h = true
+		if Input.is_action_just_pressed("move_right"):
+			sprite.flip_h = false
 
 
 func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
@@ -338,6 +360,7 @@ func _jump_velocity(gravity: float) -> float:
 
 func _on_dialogue_opened() -> void:
 	set_controls_enabled(false)
+	anim.play("idle")
 	if _using_controller:
 		# keep cursor out of sight on controller
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)

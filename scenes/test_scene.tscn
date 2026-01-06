@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=23 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
@@ -6,14 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_06gvr"]
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="4_o0qvk"]
 [ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="6_thq7k"]
-[ext_resource type="PackedScene" uid="uid://b5lqtjua380wj" path="res://scenes/NPC_VisitArea.tscn" id="8_pjseh"]
 [ext_resource type="PackedScene" path="res://scenes/quest_area.tscn" id="9_1v0jg"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="9_6c0jo"]
-[ext_resource type="Script" path="res://scripts/NPCBase.gd" id="9_dky0q"]
-[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPC_Base.tscn" id="9_uxy3f"]
+[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPCs/NPC_Base.tscn" id="9_uxy3f"]
 [ext_resource type="Script" path="res://scripts/components/StartAreaVisitRequest.gd" id="11_pmad2"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="11_w3312"]
 [ext_resource type="Script" path="res://scripts/components/GateByWorldState.gd" id="11_ww1o2"]
+[ext_resource type="PackedScene" uid="uid://dnw722ljcfa5t" path="res://scenes/NPCs/NPC_Green.tscn" id="13_s7igg"]
 [ext_resource type="Script" path="res://scripts/components/StartTalkToNPCRequest.gd" id="15_5f2en"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
@@ -121,27 +120,6 @@ fast_mode_chars_per_second = 500.0
 transform = Transform3D(2.68771, 0, 0, 0, 2.68771, 0, 0, 0, 2.68771, -1.08348, 1.46563, 4.9347)
 area_id = &"town_square"
 
-[node name="NPC_VisitArea" parent="." instance=ExtResource("8_pjseh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.780439, 1.56536, -3.80945)
-script = ExtResource("9_dky0q")
-npc_id = &"villager"
-first_visit_intro = Array[String](["hello here is a quest. visit the big ominous red square for no reason at all."])
-repeat_intro = Array[String](["go do the thing you fat neek"])
-voice_stream = ExtResource("9_6c0jo")
-voice_pitch_min = 0.59
-voice_pitch_max = 1.075
-voice_blip_every = 3
-prompt_verb = "Receive Quest"
-request_id_for_this_npc = &"visit_square"
-after_request_done_intro = Array[String](["thank you for completing my quest."])
-
-[node name="StartAreaVisitRequest" type="Node" parent="NPC_VisitArea"]
-script = ExtResource("11_pmad2")
-start_visit_request_id = &"visit_square"
-start_visit_request_title = "Central Life 2"
-start_visit_request_notes = "visit the red square"
-start_visit_area_id = &"town_square"
-
 [node name="NPC_NoRequest" parent="." instance=ExtResource("9_uxy3f")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02439, 1.56536, -1.05029)
 display_name = "Villager 2"
@@ -212,3 +190,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.41406, 1.55356, 2.65621)
 script = ExtResource("11_ww1o2")
 required_counter = &"requests_completed"
 counter_at_least = 2
+
+[node name="NPC_Green" parent="." instance=ExtResource("13_s7igg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.35042, 1.69317, 1.21483)
+npc_id = &"villager"
+first_visit_intro = Array[String](["hello here is a quest to visit a square idk bro im just a sprite"])
+repeat_intro = Array[String](["go to the square you big egg"])
+
+[node name="StartVisitAreaRequest" type="Node" parent="NPC_Green"]
+script = ExtResource("11_pmad2")
+start_visit_request_id = &"visit_square"
+start_visit_request_title = "Central Life"
+start_visit_request_notes = "visit the red square"
+start_visit_area_id = &"town_square"
