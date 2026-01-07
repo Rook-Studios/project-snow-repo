@@ -92,6 +92,9 @@ var _look_vel := Vector2.ZERO  # radians/sec (x = yaw speed, y = pitch speed)
 var _using_controller: bool = false
 var _jump_lock_timer: float = 0.0
 
+var _was_on_floor: bool = true
+var _landing: bool = false
+
 
 
 func _ready() -> void:
@@ -140,6 +143,7 @@ func _ready() -> void:
 		if not j.closed.is_connected(_on_journal_closed):
 			j.closed.connect(_on_journal_closed)
 
+	_was_on_floor = is_on_floor()
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -266,7 +270,7 @@ func _physics_process(delta: float) -> void:
 	# 6) Camera bobbing
 	_apply_camera_bob(delta)
 	
-	# 7) Quest Checking
+	# 7) Prints
 	if Input.is_action_just_pressed("check"):
 		#print(Requests.total_completed)
 		print(WorldState._flags)
@@ -274,17 +278,47 @@ func _physics_process(delta: float) -> void:
 	# 8) Controller input searching
 	_apply_controller_look(delta)
 	
-	# 9) Animations
+	# 9) Animations 
+	var trying_to_move := input_vec.length() > 0.01
+	var h_speed = Vector2(velocity.x, velocity.z).length()
+	debug.text = str(h_speed)
+	
+
+	var on_floor_now := is_on_floor()
+	var just_landed := (not _was_on_floor) and on_floor_now
+	_was_on_floor = on_floor_now
+
 	if not controls_enabled:
+		_landing = false
 		anim.play("idle")
-	elif not ray.is_colliding():
+
+	elif not on_floor_now:
+		_landing = false
 		anim.play("jump")
+
 	else:
-		var horizontal_speed := Vector2(velocity.x, velocity.z).length()
-		if horizontal_speed > 1.0:
-			anim.play("walk")
+		# If we just landed, play land once
+		if just_landed:
+			_landing = true
+			anim.play("land")
+
+		# While landing anim is playing, don't override it
+		elif _landing:
+			# When land finishes, go back to idle/walk
+			if not anim.is_playing() or anim.current_animation != "land":
+				_landing = false
+			elif anim.current_animation_position >= anim.current_animation_length - 0.001:
+				_landing = false
+
+			# If still landing, do nothing (keep "land")
+			if _landing:
+				pass
+			else:
+				anim.play("walk" if h_speed >= 1.0 else "idle")
+
 		else:
-			anim.play("idle")
+			anim.play("walk" if h_speed >= 1.0 else "idle")
+
 	
 	# 10) Sprite Flipping
 	if controls_enabled:

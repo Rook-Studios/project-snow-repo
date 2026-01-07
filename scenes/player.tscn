@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b5xhwx0w58u0h"]
+[gd_scene load_steps=13 format=3 uid="uid://b5xhwx0w58u0h"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
 [ext_resource type="Material" uid="uid://d0bs16873pgbx" path="res://resources/shaders/pixelate.tres" id="2_4x2xr"]
@@ -116,7 +116,7 @@ tracks/3/keys = {
 
 [sub_resource type="Animation" id="Animation_8icxh"]
 resource_name = "walk"
-length = 0.3
+length = 0.5
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -161,7 +161,7 @@ tracks/3/path = NodePath(".:frame")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.15),
+"times": PackedFloat32Array(0, 0.3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [1, 0]
@@ -218,11 +218,28 @@ tracks/3/keys = {
 "values": [1]
 }
 
+[sub_resource type="Animation" id="Animation_imu43"]
+resource_name = "land"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [3]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_hs5d4"]
 _data = {
 "RESET": SubResource("Animation_fiavi"),
 "idle": SubResource("Animation_jmiju"),
 "jump": SubResource("Animation_cy0e3"),
+"land": SubResource("Animation_imu43"),
 "walk": SubResource("Animation_8icxh")
 }
 
@@ -234,6 +251,7 @@ script = ExtResource("1_h1snv")
 jump_height = 1.8
 mouse_sensitivity = 0.001
 arm_start_length = 5.0
+camera_bob_enabled = false
 camera_bob_amplitude = 0.03
 camera_bob_frequency = 8.0
 camera_sway_enabled = false
@@ -276,10 +294,9 @@ libraries = {
 
 [node name="debug" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.73308, 0)
-visible = false
 billboard = 1
 font = ExtResource("4_cpe0a")
 font_size = 64
 
 [node name="ray" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.621541, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.455358, 0)
