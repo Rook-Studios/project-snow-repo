@@ -6,7 +6,8 @@
 [ext_resource type="FontFile" uid="uid://c1wlgwafi75c" path="res://resources/fonts/CutePixel.ttf" id="4_cpe0a"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]
-height = 1.44742
+radius = 0.663228
+height = 1.61063
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0vsru"]
 load_path = "res://.godot/imported/player_idle.png-e26fadf165b07744f21b91a4fc32f036.ctex"
@@ -244,7 +245,6 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.366011, 0, 0)
 floor_max_angle = 0.802851
 floor_snap_length = 0.2
 script = ExtResource("1_h1snv")
@@ -257,7 +257,7 @@ camera_bob_frequency = 8.0
 camera_sway_enabled = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.198282, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0511295, -0.110954, 0)
 shape = SubResource("CapsuleShape3D_6esgl")
 
 [node name="Pivot" type="Node3D" parent="."]
@@ -279,7 +279,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(1.48441, 0, 0, 0, 1.48441, 0, 0, 0, 1.48441, -0.05, -0.396934, 0)
+transform = Transform3D(1.48441, 0, 0, 0, 1.48441, 0, 0, 0, 1.48441, -0.05, -0.0535631, 0)
 pixel_size = 0.02
 billboard = 2
 alpha_cut = 1
@@ -294,9 +294,7 @@ libraries = {
 
 [node name="debug" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.73308, 0)
+visible = false
 billboard = 1
 font = ExtResource("4_cpe0a")
 font_size = 64
-
-[node name="ray" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.455358, 0)

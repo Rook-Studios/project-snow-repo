@@ -85,7 +85,8 @@ grow_vertical = 2
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_font_sizes/font_size = 24
+theme_override_constants/outline_size = 16
+theme_override_font_sizes/font_size = 28
 text = "NAME"
 
 [node name="ChoicesPanel" type="Panel" parent="Panel"]

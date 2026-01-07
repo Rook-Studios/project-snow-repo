@@ -80,7 +80,7 @@ var _orient_ref: Node3D
 @onready var sprite = $Sprite3D
 @onready var anim = $Sprite3D/AnimationPlayer
 @onready var debug = $debug
-@onready var ray = $ray
+
 
 var _target_arm_length: float = 0.0
 var _bob_phase: float = 0.0
