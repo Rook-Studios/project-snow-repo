@@ -34,12 +34,10 @@ import_script/path=""
 _subresources={
 "nodes": {
 "PATH:pub_centre": {
-"generate/physics": true,
-"physics/mask": 2
+"generate/physics": true
 },
 "PATH:pub_right": {
-"generate/physics": true,
-"physics/mask": 2
+"generate/physics": true
 }
 }
 }
