@@ -281,7 +281,7 @@ func _physics_process(delta: float) -> void:
 	# 9) Animations 
 	var trying_to_move := input_vec.length() > 0.01
 	var h_speed = Vector2(velocity.x, velocity.z).length()
-	debug.text = str(h_speed)
+	debug.text = str(Engine.get_frames_per_second())
 	
 
 	var on_floor_now := is_on_floor()

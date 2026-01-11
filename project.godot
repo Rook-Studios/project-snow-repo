@@ -27,6 +27,8 @@ WorldState="*res://scripts/autoloads/WorldState.gd"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/size/mode=4
+window/size/resizable=false
+window/stretch/mode="viewport"
 mouse_cursor/custom_image="res://assets/ui/cursor.png"
 
 [file_customization]
@@ -130,3 +132,7 @@ look_down={
 "events": [Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":3,"axis_value":1.0,"script":null)
 ]
 }
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

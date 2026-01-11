@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://duxa77mmorjsv"]
+[gd_scene load_steps=25 format=3 uid="uid://duxa77mmorjsv"]
 
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_p2yof"]
 [ext_resource type="Script" path="res://scripts/test_scene.gd" id="1_skq1x"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://scripts/autoloads/StartInteractObjectRequest.gd" id="14_cevda"]
 [ext_resource type="Script" path="res://scripts/components/StartTalkToNPCRequest.gd" id="15_5f2en"]
 [ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="15_ebieq"]
+[ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="16_7ftuj"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_chb0x"]
 sky_top_color = Color(0, 0.373333, 0.7, 1)
@@ -106,7 +107,7 @@ controller_look_decel = 12.0
 camera_bob_frequency = 12.0
 
 [node name="CameraZoomArea" parent="." instance=ExtResource("2_2osio")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 7.81221, 2.35321, 0)
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 7.73203, 2.35321, -3.95976)
 target_arm_length = 10.0
 zoom_lerp_speed = 1.0
 exit_zoom_lerp_speed = 1.0
@@ -208,3 +209,6 @@ target_object_id = &"test_object"
 
 [node name="Test_Object" parent="." instance=ExtResource("15_ebieq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.92353, 0.574536, 4.32766)
+
+[node name="building_pub" parent="." instance=ExtResource("16_7ftuj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.6278, 0.842898, 4.80844)
