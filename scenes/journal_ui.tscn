@@ -12,10 +12,12 @@ script = ExtResource("1_hn1e3")
 
 [node name="Panel" type="Panel" parent="."]
 texture_filter = 1
-offset_left = 30.0
-offset_top = 27.0
-offset_right = 1216.0
-offset_bottom = 1069.0
+offset_left = 168.0
+offset_top = -75.0
+offset_right = 1354.0
+offset_bottom = 967.0
+scale = Vector2(0.8, 0.8)
+pivot_offset = Vector2(563, 521)
 theme = ExtResource("2_erl7a")
 theme_override_styles/panel = SubResource("StyleBoxTexture_0aosa")
 

@@ -1,8 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://mrp6ep301k5g"]
+[gd_scene load_steps=5 format=3 uid="uid://mrp6ep301k5g"]
 
-[ext_resource type="Script" path="res://scripts/autoloads/InteractableEmitter.gd" id="1_hks0f"]
 [ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/fonts/Daydream DEMO.otf" id="1_lkul6"]
-[ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="3_0j7tk"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_lgvml"]
 
@@ -31,14 +29,3 @@ shape = SubResource("CylinderShape3D_88nm3")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.40173, 0)
 billboard = 1
 font = ExtResource("1_lkul6")
-
-[node name="InteractableEmitter" type="Node" parent="."]
-script = ExtResource("1_hks0f")
-object_id = &"test_object"
-zone_path = NodePath("../Area3D")
-speaker_name = " Test Object"
-flavour_lines = Array[String](["hello there.", "i am a box."])
-flavour_voice_stream = ExtResource("3_0j7tk")
-flavour_voice_pitch_min = 2.0
-flavour_voice_pitch_max = 2.1
-flavour_voice_blip_every = 1

@@ -24,11 +24,13 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -819.0
-offset_top = -367.0
+offset_top = -312.0
 offset_right = 765.0
-offset_bottom = -39.0
+offset_bottom = 16.0
 grow_horizontal = 2
 grow_vertical = 0
+scale = Vector2(0.8, 0.8)
+pivot_offset = Vector2(792, 164)
 theme = ExtResource("2_mya3m")
 
 [node name="MarginContainer" type="MarginContainer" parent="Panel"]

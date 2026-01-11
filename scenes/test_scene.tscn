@@ -22,12 +22,12 @@ sky_top_color = Color(0, 0.373333, 0.7, 1)
 sky_horizon_color = Color(0.676573, 0.5544, 0.77, 1)
 sky_curve = 0.191184
 
-[sub_resource type="Sky" id="Sky_h6w6j"]
+[sub_resource type="Sky" id="Sky_dsrxn"]
 sky_material = SubResource("ProceduralSkyMaterial_chb0x")
 
 [sub_resource type="Environment" id="Environment_uj03q"]
 background_mode = 2
-sky = SubResource("Sky_h6w6j")
+sky = SubResource("Sky_dsrxn")
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 

@@ -152,15 +152,17 @@ func _input(event: InputEvent) -> void:
 		_using_controller = true
 	elif event is InputEventMouseMotion or event is InputEventMouseButton or event is InputEventKey:
 		_using_controller = false
+	
+	if _using_controller == false:
+		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+			_yaw -= event.relative.x * mouse_sensitivity
+			var dy = event.relative.y * mouse_sensitivity
+			_pitch += (dy if invert_y else -dy)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not controls_enabled:
 		return
 
-	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		_yaw -= event.relative.x * mouse_sensitivity
-		var dy = event.relative.y * mouse_sensitivity
-		_pitch += (dy if invert_y else -dy)
 
 		var min_p := deg_to_rad(min_pitch_deg)
 		var max_p := deg_to_rad(max_pitch_deg)

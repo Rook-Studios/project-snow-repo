@@ -25,6 +25,9 @@ signal talk_finished
 
 @export_group("Interaction")
 @export var prompt_verb: String = "Talk"
+@export var interact_lock_after_talk: float = 0.15
+var _interact_lock_timer: float = 0.0
+
 
 @export_group("Request Dialogue Gating")
 @export var request_id_for_this_npc: StringName = &""
@@ -73,14 +76,20 @@ func _ready() -> void:
 				_update_prompt()
 		)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	if _interact_lock_timer > 0.0:
+		_interact_lock_timer = max(_interact_lock_timer - delta, 0.0)
+
 	if _player_in and not _talking:
 		_update_prompt()
 
-func _unhandled_input(e: InputEvent) -> void:
-	if _player_in and not _talking and e.is_action_pressed("interact"):
-		if _player_body != null and _player_body.is_on_floor():
-			_start_conversation()
+
+	if _player_in and not _talking and _interact_lock_timer <= 0.0:
+		if Input.is_action_just_pressed("interact"):
+			if _player_body != null and _player_body.is_on_floor():
+				_start_conversation()
+
+
 
 func _on_scheme_changed(_is_controller: bool) -> void:
 	_update_prompt_text()
@@ -196,6 +205,8 @@ func _end_conversation() -> void:
 	_talking = false
 	_times_spoken += 1
 	_update_prompt()
+	_interact_lock_timer = interact_lock_after_talk
+
 
 	# Count unique NPCs talked to (only once per npc_id)
 	if npc_id != StringName() and WorldState != null:
@@ -252,7 +263,8 @@ func _ui() -> Node:
 
 func _update_prompt() -> void:
 	var grounded := _player_body != null and _player_body.is_on_floor()
-	_prompt.visible = _player_in and grounded and not _talking
+	_prompt.visible = _player_in and grounded and not _talking and _interact_lock_timer <= 0.0
+
 
 func _connect_closed_once(fn: Callable) -> void:
 	var ui := _ui()

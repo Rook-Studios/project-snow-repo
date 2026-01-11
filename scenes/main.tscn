@@ -1,0 +1,181 @@
+[gd_scene load_steps=24 format=3 uid="uid://di2kjy3cy8na2"]
+
+[ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
+[ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
+[ext_resource type="Script" path="res://scripts/ui_scripts/ViewportSettings.gd" id="2_0d1u4"]
+[ext_resource type="PackedScene" uid="uid://h7kbtycsnk26" path="res://scenes/NPCs/NPC_Base.tscn" id="2_gmodg"]
+[ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="2_vur1f"]
+[ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="3_6q4xb"]
+[ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_kjn6l"]
+[ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="4_72185"]
+[ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="6_m8kbc"]
+[ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="8_hfefy"]
+[ext_resource type="PackedScene" uid="uid://dnw722ljcfa5t" path="res://scenes/NPCs/NPC_Green.tscn" id="9_3dqgm"]
+[ext_resource type="Script" path="res://scripts/autoloads/InteractableEmitter.gd" id="9_h2fau"]
+[ext_resource type="Script" path="res://scripts/autoloads/StartInteractObjectRequest.gd" id="10_e728n"]
+[ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="12_7ex7d"]
+[ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ri2rv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0yenb"]
+size = Vector3(2.00208, 0.0756836, 2.06812)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_iv5vp"]
+sky_top_color = Color(0, 0.373333, 0.7, 1)
+sky_horizon_color = Color(0.676573, 0.5544, 0.77, 1)
+sky_curve = 0.191184
+
+[sub_resource type="Sky" id="Sky_h6w6j"]
+sky_material = SubResource("ProceduralSkyMaterial_iv5vp")
+
+[sub_resource type="Environment" id="Environment_houe5"]
+background_mode = 2
+sky = SubResource("Sky_h6w6j")
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0
+
+[sub_resource type="Resource" id="Resource_bsn4f"]
+script = ExtResource("3_6q4xb")
+lines = Array[String](["I will now present you with a choice, to test the UI theming of the labels. i am also talking a lot more to allow for for for the impossibly fast word wrapping to work properly.", "here is your choice, pick your favourite answer."])
+choice_line_index = 1
+choice_labels = Array[String](["yes", "no, fug off"])
+followup_choice0 = Array[String](["ah you were nice to me. thank you."])
+followup_choice1 = Array[String](["how rude."])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = false
+play_once = false
+block_id = &""
+
+[sub_resource type="Resource" id="Resource_lrvrr"]
+script = ExtResource("3_6q4xb")
+lines = Array[String](["this block should only appear after you have completed my friend's [tornado]quest[/tornado], regardless of whether or not you have spoken to me before"])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_2e0dw"]
+viewport_path = NodePath("SubViewport")
+
+[node name="Main" type="Node"]
+script = ExtResource("1_hpbec")
+lowres_viewport_path = NodePath("SubViewport")
+
+[node name="settings" type="Node" parent="."]
+script = ExtResource("2_0d1u4")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(320, 240)
+render_target_update_mode = 4
+
+[node name="WorldRoot" type="Node3D" parent="SubViewport"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
+transform = Transform3D(16.3467, 0, 0, 0, 16.3467, 0, 0, 0, 16.3467, 0, -0.267905, 0)
+mesh = SubResource("PlaneMesh_ri2rv")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="SubViewport/WorldRoot/MeshInstance3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/WorldRoot/MeshInstance3D/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00836182, -0.0260816, 0.0413818)
+shape = SubResource("BoxShape3D_0yenb")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport/WorldRoot"]
+transform = Transform3D(1, 0, 0, 0, -0.156762, 0.987636, 0, -0.987636, -0.156762, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport/WorldRoot"]
+environment = SubResource("Environment_houe5")
+
+[node name="Player" parent="SubViewport/WorldRoot" instance=ExtResource("1_t6srd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45173, 0)
+camera_bob_enabled = true
+camera_bob_frequency = 12.0
+
+[node name="NPC_NoRequest" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.48014, 1.22339, -2.61528)
+display_name = "Villager 2"
+npc_id = &"villager_2"
+first_visit_intro = Array[String](["hello there. I do not give out quests."])
+repeat_intro = Array[String](["go and see what my friend wants over there."])
+blocks = Array[ExtResource("3_6q4xb")]([SubResource("Resource_bsn4f")])
+voice_stream = ExtResource("4_72185")
+voice_blip_every = 1
+request_id_for_this_npc = &"touch_cube"
+after_request_done_intro = Array[String](["you have completed my friend's quest. well done."])
+after_request_done_blocks = Array[ExtResource("3_6q4xb")]([SubResource("Resource_lrvrr")])
+
+[node name="building_pub" parent="SubViewport/WorldRoot" instance=ExtResource("6_m8kbc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.3053, 0, 2.62503)
+
+[node name="Test_Object" parent="SubViewport/WorldRoot" instance=ExtResource("8_hfefy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67468, 0, 1.49493)
+
+[node name="InteractableEmitter" type="Node" parent="SubViewport/WorldRoot/Test_Object"]
+script = ExtResource("9_h2fau")
+object_id = &"test_object"
+zone_path = NodePath("../Area3D")
+speaker_name = " Test Object"
+flavour_lines = Array[String](["hello there.", "i am a box."])
+flavour_voice_stream = ExtResource("4_72185")
+flavour_voice_pitch_min = 2.0
+flavour_voice_pitch_max = 2.1
+flavour_voice_blip_every = 1
+
+[node name="NPC_Green" parent="SubViewport/WorldRoot" instance=ExtResource("9_3dqgm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.251608, 1.18815, 3.88497)
+npc_id = &"villager"
+first_visit_intro = Array[String](["hello here is a quest to visit a square idk bro im just a sprite"])
+repeat_intro = Array[String](["go to the square you big egg"])
+
+[node name="StartInteractObjectRequest" type="Node" parent="SubViewport/WorldRoot/NPC_Green"]
+script = ExtResource("10_e728n")
+request_id = &"touch_cube"
+title = "touch stuff"
+notes = "touch the thing"
+target_object_id = &"test_object"
+
+[node name="CameraZoomArea" parent="SubViewport/WorldRoot" instance=ExtResource("12_7ex7d")]
+transform = Transform3D(3.28671, 0, 0, 0, 3.28671, 0, 0, 0, 3.28671, 6.84502, 1.32845, -9.72721)
+target_arm_length = 10.0
+zoom_lerp_speed = 1.0
+exit_zoom_lerp_speed = 2.0
+
+[node name="LowResLayer" type="CanvasLayer" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="LowResLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="LowResScreen" type="TextureRect" parent="LowResLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("ViewportTexture_2e0dw")
+stretch_mode = 5
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="JournalUI" parent="UILayer" instance=ExtResource("2_vur1f")]
+layer = 20
+
+[node name="DialogueUI" parent="UILayer" instance=ExtResource("3_kjn6l")]
+layer = 10
+
+[node name="RequestToast" parent="UILayer" instance=ExtResource("14_gsv2o")]
