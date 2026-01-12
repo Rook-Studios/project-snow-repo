@@ -36,6 +36,9 @@ _subresources={
 "PATH:pub_centre": {
 "generate/physics": true
 },
+"PATH:pub_door": {
+"generate/physics": true
+},
 "PATH:pub_right": {
 "generate/physics": true
 }

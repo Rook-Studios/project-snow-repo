@@ -1,15 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://b5xhwx0w58u0h"]
+[gd_scene load_steps=11 format=3 uid="uid://b5xhwx0w58u0h"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
-[ext_resource type="Material" uid="uid://d0bs16873pgbx" path="res://resources/shaders/pixelate.tres" id="2_4x2xr"]
 [ext_resource type="Texture2D" uid="uid://7tkht8cs06kr" path="res://assets/player/player_sheet.png" id="3_01ab7"]
 [ext_resource type="FontFile" uid="uid://c1wlgwafi75c" path="res://resources/fonts/CutePixel.ttf" id="4_cpe0a"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]
 radius = 0.663228
 height = 1.61063
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0vsru"]
 
 [sub_resource type="Animation" id="Animation_fiavi"]
 length = 0.001
@@ -23,7 +20,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [SubResource("CompressedTexture2D_0vsru")]
+"values": [ExtResource("3_01ab7")]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -256,7 +253,7 @@ camera_bob_frequency = 8.0
 camera_sway_enabled = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0511295, -0.110954, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0511295, -0.0128766, 0)
 shape = SubResource("CapsuleShape3D_6esgl")
 
 [node name="Pivot" type="Node3D" parent="."]
@@ -266,25 +263,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.239515, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Pivot/SpringArm3D"]
 
-[node name="PixelFilter" type="CanvasLayer" parent="."]
-visible = false
-
-[node name="PixelRect" type="ColorRect" parent="PixelFilter"]
-material = ExtResource("2_4x2xr")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1.48441, 0, 0, 0, 1.48441, 0, 0, 0, 1.48441, -0.05, -0.0535631, 0)
 pixel_size = 0.02
 billboard = 2
+shaded = true
 alpha_cut = 1
 texture_filter = 0
-texture = SubResource("CompressedTexture2D_0vsru")
+texture = ExtResource("3_01ab7")
 hframes = 2
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite3D"]

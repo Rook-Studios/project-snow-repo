@@ -7,7 +7,7 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_5huoa"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_88nm3"]
-height = 1.15625
+height = 0.619238
 radius = 1.0892
 
 [node name="Test_Object" type="Node3D"]
