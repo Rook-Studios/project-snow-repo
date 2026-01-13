@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://di2kjy3cy8na2"]
+[gd_scene load_steps=25 format=3 uid="uid://di2kjy3cy8na2"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dypvg8e8j1ci8" path="res://scenes/journal_ui.tscn" id="2_vur1f"]
 [ext_resource type="Script" path="res://resources/DialogueBlock.gd" id="3_6q4xb"]
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_kjn6l"]
+[ext_resource type="Texture2D" uid="uid://cfs12tcw7r8g3" path="res://assets/test-assets/skybox_test.png" id="3_ygiuo"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="4_72185"]
 [ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="6_m8kbc"]
 [ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="8_hfefy"]
@@ -17,25 +18,21 @@
 [ext_resource type="Material" uid="uid://4risjssarmes" path="res://resources/shaders/skybox.tres" id="13_1ux0w"]
 [ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_ri2rv"]
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_jxnet"]
+panorama = ExtResource("3_ygiuo")
+energy_multiplier = 0.5
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_0yenb"]
-size = Vector3(2.00208, 0.0756836, 2.06812)
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_iv5vp"]
-sky_top_color = Color(0, 0.373333, 0.7, 1)
-sky_horizon_color = Color(0.676573, 0.5544, 0.77, 1)
-sky_curve = 0.191184
-
-[sub_resource type="Sky" id="Sky_h6w6j"]
-sky_material = SubResource("ProceduralSkyMaterial_iv5vp")
+[sub_resource type="Sky" id="Sky_m08x0"]
+sky_material = SubResource("PanoramaSkyMaterial_jxnet")
 
 [sub_resource type="Environment" id="Environment_houe5"]
 background_mode = 2
 background_energy_multiplier = 0.6
-sky = SubResource("Sky_h6w6j")
+sky = SubResource("Sky_m08x0")
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
+adjustment_enabled = true
+adjustment_contrast = 1.1
 
 [sub_resource type="Resource" id="Resource_bsn4f"]
 script = ExtResource("3_6q4xb")
@@ -84,16 +81,6 @@ size = Vector2i(320, 240)
 render_target_update_mode = 4
 
 [node name="WorldRoot" type="Node3D" parent="SubViewport"]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
-transform = Transform3D(16.3467, 0, 0, 0, 16.3467, 0, 0, 0, 16.3467, 0, -0.267905, 0)
-mesh = SubResource("PlaneMesh_ri2rv")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="SubViewport/WorldRoot/MeshInstance3D"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/WorldRoot/MeshInstance3D/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00836182, -0.0260816, 0.0413818)
-shape = SubResource("BoxShape3D_0yenb")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport/WorldRoot"]
 environment = SubResource("Environment_houe5")
@@ -157,6 +144,7 @@ zoom_lerp_speed = 1.0
 exit_zoom_lerp_speed = 2.0
 
 [node name="Player" parent="SubViewport/WorldRoot" instance=ExtResource("1_t6srd")]
+jump_height = 4.0
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
 transform = Transform3D(86.8418, 0, 0, 0, 86.8418, 0, 0, 0, 86.8418, 0, 0, 0)
@@ -164,10 +152,14 @@ visible = false
 mesh = SubResource("BoxMesh_epcot")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport/WorldRoot"]
-transform = Transform3D(-0.416154, 0.649666, -0.6362, 0, 0.699663, 0.714473, 0.909294, 0.297331, -0.291168, 0, 4.6163, 0)
+transform = Transform3D(-0.023737, 0.90936, -0.415333, 0.0518869, 0.416011, 0.907878, 0.998371, -7.08359e-09, -0.0570587, 0, 7.92166, 0)
 light_color = Color(0.319367, 0.176, 0.55, 1)
-light_energy = 0.7
+light_energy = 2.0
 shadow_enabled = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="SubViewport/WorldRoot"]
+transform = Transform3D(50, 0, 0, 0, 1, 0, 0, 0, 50, 0, -1.07937, 0)
+use_collision = true
 
 [node name="LowResLayer" type="CanvasLayer" parent="."]
 

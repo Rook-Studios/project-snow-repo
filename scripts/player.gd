@@ -146,6 +146,8 @@ func _ready() -> void:
 	_was_on_floor = is_on_floor()
 
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	sprite.offset.x = -3
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
@@ -326,8 +328,10 @@ func _physics_process(delta: float) -> void:
 	if controls_enabled:
 		if Input.is_action_just_pressed("move_left"):
 			sprite.flip_h = true
+			sprite.offset.x = 3
 		if Input.is_action_just_pressed("move_right"):
 			sprite.flip_h = false
+			sprite.offset.x = -3
 
 
 func set_camera_zoom_target(target_length: float, speed: float = -1.0) -> void:
