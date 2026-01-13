@@ -95,10 +95,6 @@ mesh = SubResource("PlaneMesh_ri2rv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00836182, -0.0260816, 0.0413818)
 shape = SubResource("BoxShape3D_0yenb")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport/WorldRoot"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 9.36453, 0)
-shadow_enabled = true
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport/WorldRoot"]
 environment = SubResource("Environment_houe5")
 
@@ -119,21 +115,13 @@ after_request_done_blocks = Array[ExtResource("3_6q4xb")]([SubResource("Resource
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.3053, 0.503908, 4.95225)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="SubViewport/WorldRoot/building_pub"]
-transform = Transform3D(-4.24676e-08, -0.957325, 0.289015, -1.03533e-08, 0.289015, 0.957325, -1, 3.7663e-08, -2.21852e-08, -12.7951, 4.55265, -5.81346)
+transform = Transform3D(0.00244342, -0.957322, 0.289014, -1.03533e-08, 0.289015, 0.957325, -0.999997, -0.00233915, 0.000706174, -12.7951, 4.2304, -5.81346)
 light_color = Color(1, 0.423529, 0.14902, 1)
-light_energy = 3.484
+light_energy = 11.726
 shadow_enabled = true
-spot_range = 6.841
+spot_range = 7.08892
 spot_angle = 45.7249
-spot_angle_attenuation = 3.73214
-
-[node name="SpotLight3D2" type="SpotLight3D" parent="SubViewport/WorldRoot/building_pub"]
-transform = Transform3D(-2.41285e-08, -0.898825, -0.438308, -3.64486e-08, -0.438308, 0.898825, -1, 3.7663e-08, -2.21852e-08, -15.8539, 4.2696, -5.81346)
-light_color = Color(1, 0.423529, 0.14902, 1)
-light_energy = 3.484
-shadow_enabled = true
-spot_range = 6.89051
-spot_angle = 53.007
+spot_angle_attenuation = 1.86607
 
 [node name="Test_Object" parent="SubViewport/WorldRoot" instance=ExtResource("8_hfefy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.15921, 0, 2.5313)
@@ -172,7 +160,14 @@ exit_zoom_lerp_speed = 2.0
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
 transform = Transform3D(86.8418, 0, 0, 0, 86.8418, 0, 0, 0, 86.8418, 0, 0, 0)
+visible = false
 mesh = SubResource("BoxMesh_epcot")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport/WorldRoot"]
+transform = Transform3D(-0.416154, 0.649666, -0.6362, 0, 0.699663, 0.714473, 0.909294, 0.297331, -0.291168, 0, 4.6163, 0)
+light_color = Color(0.319367, 0.176, 0.55, 1)
+light_energy = 0.7
+shadow_enabled = true
 
 [node name="LowResLayer" type="CanvasLayer" parent="."]
 
