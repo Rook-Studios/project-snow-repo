@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://b5xhwx0w58u0h"]
+[gd_scene load_steps=13 format=3 uid="uid://b5xhwx0w58u0h"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
 [ext_resource type="Texture2D" uid="uid://7tkht8cs06kr" path="res://assets/player/player_sheet.png" id="3_01ab7"]
 [ext_resource type="FontFile" uid="uid://c1wlgwafi75c" path="res://resources/fonts/CutePixel.ttf" id="4_cpe0a"]
+[ext_resource type="Texture2D" uid="uid://dd6jce7l3pe6t" path="res://assets/test-assets/test_shadow.png" id="4_hdues"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]
 radius = 0.663228
@@ -293,3 +294,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.73308, 0)
 billboard = 1
 font = ExtResource("4_cpe0a")
 font_size = 64
+
+[node name="Decal" type="Decal" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.36519, 0)
+size = Vector3(2, 6.82239, 2)
+texture_albedo = ExtResource("4_hdues")
+upper_fade = 0.01
+lower_fade = 0.1

@@ -93,7 +93,7 @@ first_visit_intro = Array[String](["hello there. I do not give out quests."])
 repeat_intro = Array[String](["go and see what my friend wants over there."])
 blocks = Array[ExtResource("3_6q4xb")]([SubResource("Resource_bsn4f")])
 voice_stream = ExtResource("4_72185")
-voice_blip_every = 1
+voice_blip_every = 6
 request_id_for_this_npc = &"touch_cube"
 after_request_done_intro = Array[String](["you have completed my friend's quest. well done."])
 after_request_done_blocks = Array[ExtResource("3_6q4xb")]([SubResource("Resource_lrvrr")])
@@ -129,6 +129,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.251608, 1.18815, 3.88497)
 npc_id = &"villager"
 first_visit_intro = Array[String](["hello here is a quest to visit a square idk bro im just a sprite"])
 repeat_intro = Array[String](["go to the square you big egg"])
+voice_blip_every = 6
 
 [node name="StartInteractObjectRequest" type="Node" parent="SubViewport/WorldRoot/NPC_Green"]
 script = ExtResource("10_e728n")
