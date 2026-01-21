@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://di2kjy3cy8na2"]
+[gd_scene load_steps=25 format=3 uid="uid://bjjnyfmc5m8rv"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -16,7 +16,7 @@
 [ext_resource type="Script" path="res://scripts/autoloads/StartInteractObjectRequest.gd" id="10_e728n"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="12_7ex7d"]
 [ext_resource type="Material" uid="uid://4risjssarmes" path="res://resources/shaders/skybox.tres" id="13_1ux0w"]
-[ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
+[ext_resource type="PackedScene" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_jxnet"]
 panorama = ExtResource("3_ygiuo")
