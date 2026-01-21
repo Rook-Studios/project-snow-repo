@@ -145,6 +145,7 @@ exit_zoom_lerp_speed = 2.0
 
 [node name="Player" parent="SubViewport/WorldRoot" instance=ExtResource("1_t6srd")]
 jump_height = 4.0
+mouse_sensitivity = 0.002
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
 transform = Transform3D(86.8418, 0, 0, 0, 86.8418, 0, 0, 0, 86.8418, 0, 0, 0)
