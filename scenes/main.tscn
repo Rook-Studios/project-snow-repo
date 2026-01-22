@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bjjnyfmc5m8rv"]
+[gd_scene load_steps=41 format=3 uid="uid://bjjnyfmc5m8rv"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
 [ext_resource type="Texture2D" uid="uid://v6m6afadec0r" path="res://assets/environment/env_txt_snow.png" id="15_6irae"]
 [ext_resource type="Texture2D" uid="uid://byjd13b4v0sal" path="res://assets/environment/env_txt_dirt.png" id="16_ylu7y"]
+[ext_resource type="PackedScene" uid="uid://coko3tb7w8x27" path="res://scenes/debug_ui.tscn" id="20_4ea6t"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_jxnet"]
 panorama = ExtResource("3_ygiuo")
@@ -317,3 +318,5 @@ layer = 20
 layer = 10
 
 [node name="RequestToast" parent="UILayer" instance=ExtResource("14_gsv2o")]
+
+[node name="DebugUI" parent="UILayer" instance=ExtResource("20_4ea6t")]
