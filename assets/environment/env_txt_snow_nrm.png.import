@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://v6m6afadec0r"
-path="res://.godot/imported/env_txt_snow.png-9c531b8fd24fd2f698ce1f3b9a6e30f5.ctex"
+uid="uid://b75hy3kwymv0y"
+path="res://.godot/imported/env_txt_snow_nrm.png-6ec314e37be0a46873f3968e12b61753.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/environment/env_txt_snow.png"
-dest_files=["res://.godot/imported/env_txt_snow.png-9c531b8fd24fd2f698ce1f3b9a6e30f5.ctex"]
+source_file="res://assets/environment/env_txt_snow_nrm.png"
+dest_files=["res://.godot/imported/env_txt_snow_nrm.png-6ec314e37be0a46873f3968e12b61753.ctex"]
 
 [params]
 
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1
