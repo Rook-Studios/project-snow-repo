@@ -32,9 +32,14 @@ window/size/resizable=false
 window/stretch/mode="viewport"
 mouse_cursor/custom_image="res://assets/ui/cursor.png"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
+
 [file_customization]
 
 folder_colors={
+"res://addons/": "gray",
 "res://assets/": "teal",
 "res://resources/": "purple",
 "res://scenes/": "red",
