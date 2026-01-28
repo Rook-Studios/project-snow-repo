@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bjjnyfmc5m8rv"]
+[gd_scene load_steps=43 format=3 uid="uid://bjjnyfmc5m8rv"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://dy6qo2nuikj2v" path="res://assets/environment/env_txt_water.png" id="5_tf7ry"]
 [ext_resource type="Texture2D" uid="uid://cnfr6sreohedk" path="res://assets/environment/env_txt_water2.png" id="6_dwpao"]
 [ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="6_m8kbc"]
+[ext_resource type="PackedScene" uid="uid://5ed8mgm36emu" path="res://scenes/water_volume.tscn" id="7_34p5p"]
 [ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="8_hfefy"]
 [ext_resource type="PackedScene" uid="uid://dnw722ljcfa5t" path="res://scenes/NPCs/NPC_Green.tscn" id="9_3dqgm"]
 [ext_resource type="Script" path="res://scripts/components/InteractableEmitter.gd" id="9_48rgd"]
@@ -23,6 +24,7 @@
 [ext_resource type="Script" path="res://scripts/components/StartTalkNUniqueRequest.gd" id="16_1qp80"]
 [ext_resource type="Texture2D" uid="uid://b75hy3kwymv0y" path="res://assets/environment/env_txt_snow_nrm.png" id="16_atab1"]
 [ext_resource type="PackedScene" uid="uid://coko3tb7w8x27" path="res://scenes/debug_ui.tscn" id="20_4ea6t"]
+[ext_resource type="Shader" path="res://resources/shaders/water2d.gdshader" id="24_sb3c2"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_jxnet"]
 panorama = ExtResource("3_ygiuo")
@@ -46,8 +48,8 @@ adjustment_contrast = 1.1
 render_priority = -1
 shader = ExtResource("14_nt52v")
 shader_parameter/albedo = Color(0.71, 0.772833, 1, 1)
-shader_parameter/scroll_speed1 = Vector2(0.05, 0)
-shader_parameter/scroll_speed2 = Vector2(-0.03, 0)
+shader_parameter/scroll_speed1 = Vector2(0.1, 0)
+shader_parameter/scroll_speed2 = Vector2(-0.15, 0)
 shader_parameter/blend_factor = 0.5
 shader_parameter/scale1 = Vector2(16, 64)
 shader_parameter/scale2 = Vector2(16, 64)
@@ -175,6 +177,15 @@ block_id = &""
 [sub_resource type="ViewportTexture" id="ViewportTexture_2e0dw"]
 viewport_path = NodePath("SubViewport")
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_al0us"]
+shader = ExtResource("24_sb3c2")
+shader_parameter/effect_strength = 0.8
+shader_parameter/wave_strength = 0.01
+shader_parameter/wave_speed = 0.6
+shader_parameter/wave_scale = 12.0
+shader_parameter/tint_color = Color(0.135066, 0.553919, 0.999993, 1)
+shader_parameter/tint_amount = 1.0
+
 [node name="Main" type="Node"]
 script = ExtResource("1_hpbec")
 lowres_viewport_path = NodePath("SubViewport")
@@ -202,6 +213,9 @@ shadow_enabled = true
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 468.217, -88.9659, -1.87586, 1.08792)
 mesh = SubResource("PlaneMesh_seq5c")
 surface_material_override/0 = SubResource("ShaderMaterial_quc2j")
+
+[node name="Area3D" parent="SubViewport/WorldRoot/water" instance=ExtResource("7_34p5p")]
+transform = Transform3D(1.66925, 0, 0, 0, 0.191893, 0, 0, 0, 1.58932, 0.259905, -0.111074, -0.0719478)
 
 [node name="Terrain3D" type="Terrain3D" parent="SubViewport/WorldRoot"]
 data_directory = "res://terraindd"
@@ -271,6 +285,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.4881, 0)
 walk_speed = 4.0
 jump_height = 4.0
 mouse_sensitivity = 0.002
+water_speed_multiplier = 0.6
+water_jump_multiplier = 1.8
+water_accel_multiplier = 0.6
 
 [node name="NPC_Base" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.28287, 0.92437, -8.6178)
@@ -316,4 +333,14 @@ layer = 10
 
 [node name="RequestToast" parent="UILayer" instance=ExtResource("14_gsv2o")]
 
+[node name="WaterRect" type="ColorRect" parent="UILayer"]
+material = SubResource("ShaderMaterial_al0us")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="DebugUI" parent="UILayer" instance=ExtResource("20_4ea6t")]
+
+[editable path="SubViewport/WorldRoot/water/Area3D"]

@@ -70,6 +70,24 @@ extends CharacterBody3D
 @export var orientation_node: NodePath
 
 
+@export_category("Water Movement")
+@export var water_speed_multiplier: float = 0.75   # slower
+@export var water_jump_multiplier: float = 1.2     # higher jump
+@export var water_gravity_multiplier: float = 0.6  # floatier fall
+@export var water_accel_multiplier: float = 0.8
+
+@export_category("Water Visuals")
+@export var water_sprite_tint: Color = Color(0.6, 0.8, 1.0, 1.0)
+@export var water_fx_path: NodePath  # drag your SubViewport TextureRect here in inspector
+@export var water_fx_param: StringName = &"effect_strength"
+@export var water_fx_on: float = 1.0
+@export var water_fx_off: float = 0.0
+
+var _sprite_normal_tint: Color = Color.WHITE
+@onready var _water_fx_node: CanvasItem = get_node_or_null(water_fx_path) as CanvasItem
+
+
+
 var _yaw := 0.0
 var _pitch := 0.0
 
@@ -80,6 +98,7 @@ var _orient_ref: Node3D
 @onready var sprite = $Sprite3D
 @onready var anim = $Sprite3D/AnimationPlayer
 @onready var debug = $debug
+@onready var water_rect: ColorRect = $"../../../UILayer/WaterRect"
 
 
 var _target_arm_length: float = 0.0
@@ -94,6 +113,10 @@ var _jump_lock_timer: float = 0.0
 
 var _was_on_floor: bool = true
 var _landing: bool = false
+
+var _in_water: bool = false
+var _water_id: StringName = &""
+
 
 
 
@@ -148,6 +171,8 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	
 	sprite.offset.x = -3
+	_sprite_normal_tint = sprite.modulate
+
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
@@ -196,8 +221,16 @@ func _physics_process(delta: float) -> void:
 			velocity.z = 0
 		move_and_slide()
 		return
+	
+	var speed_mul := water_speed_multiplier if _in_water else 1.0
+	var grav_mul  := water_gravity_multiplier if _in_water else 1.0
+	var jump_mul  := water_jump_multiplier if _in_water else 1.0
+	var accel_mul := water_accel_multiplier if _in_water else 1.0
 
-	var g: float = (ProjectSettings.get_setting("physics/3d/default_gravity") as float) * gravity_scale
+
+	var g: float = (ProjectSettings.get_setting("physics/3d/default_gravity") as float) * gravity_scale * grav_mul
+
+
 	
 	if _jump_lock_timer > 0.0:
 		_jump_lock_timer = max(_jump_lock_timer - delta, 0.0)
@@ -231,12 +264,12 @@ func _physics_process(delta: float) -> void:
 		move_dir = dir3.normalized() if dir3.length() > 0.001 else Vector3.ZERO
 
 	# 2) Horizontal velocity lerp (scale speed by analog strength)
-	var target_speed := walk_speed  # (you can swap to sprint_speed if you later add sprint on controller)
+	var target_speed := walk_speed * speed_mul  # (you can swap to sprint_speed if you later add sprint on controller)
 	var desired_vxz = move_dir * (target_speed * input_strength)
 
 	var current_vxz := Vector2(velocity.x, velocity.z)
 	var desired_vxz2 := Vector2(desired_vxz.x, desired_vxz.z)
-	var accel := acceleration if is_on_floor() else air_acceleration
+	var accel := (acceleration if is_on_floor() else air_acceleration) * accel_mul
 	current_vxz = current_vxz.lerp(desired_vxz2, clamp(accel * delta, 0.0, 1.0))
 	velocity.x = current_vxz.x
 	velocity.z = current_vxz.y
@@ -246,7 +279,7 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		velocity.y = min(velocity.y, 0.0)
 		if _jump_lock_timer <= 0.0 and Input.is_action_just_pressed("jump"):
-			velocity.y = _jump_velocity(g)
+			velocity.y = _jump_velocity(g) * jump_mul
 
 	else:
 		if velocity.y > 0.0:
@@ -473,3 +506,14 @@ func _on_journal_opened() -> void:
 func _on_journal_closed() -> void:
 	set_controls_enabled(true)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+
+func set_in_water(v: bool, water_id: StringName = &"") -> void:
+	_in_water = v
+	_water_id = water_id
+
+	# 1) Tint the player sprite
+	sprite.modulate = water_sprite_tint if _in_water else _sprite_normal_tint
+
+	# 2) Enable/disable the screen effect
+	water_rect.visible = true if _in_water else false
