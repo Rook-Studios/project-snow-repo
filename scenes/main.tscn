@@ -71,7 +71,7 @@ noise = SubResource("FastNoiseLite_y8e7j")
 [sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_2v14n"]
 _shader_parameters = {
 "bias_distance": 512.0,
-"blend_sharpness": 0.571,
+"blend_sharpness": 0.6,
 "depth_blur": 0.0,
 "enable_macro_variation": true,
 "enable_projection": true,
@@ -96,10 +96,11 @@ _shader_parameters = {
 "world_noise_offset": Vector3(0, 0, 0),
 "world_noise_region_blend": 0.33,
 "world_noise_scale": 5.0,
-"world_space_normal_blend": true
+"world_space_normal_blend": false
 }
 world_background = 2
 texture_filtering = 1
+show_region_grid = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w8qqr"]
 transparency = 4
@@ -222,18 +223,22 @@ transform = Transform3D(-0.023737, 0.90936, -0.415333, 0.0518869, 0.416011, 0.90
 light_color = Color(0.319367, 0.176, 0.55, 1)
 light_energy = 2.0
 shadow_enabled = true
+directional_shadow_mode = 1
 
 [node name="Terrain3D" type="Terrain3D" parent="SubViewport/WorldRoot"]
 data_directory = "res://terraindd"
 material = SubResource("Terrain3DMaterial_2v14n")
 assets = SubResource("Terrain3DAssets_jkabe")
+show_grid = true
 collision_mode = 3
-cull_margin = 13150.0
+mesh_size = 24
+cull_margin = 10.0
+show_region_grid = true
 top_level = true
 metadata/_edit_lock_ = true
 
 [node name="water" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
-transform = Transform3D(65.7301, 0, 0, 0, 100, 0, 0, 0, 303.43, -34.1488, -1.87586, 25.9878)
+transform = Transform3D(488.387, 0, 0, 0, 100, 0, 0, 0, 516.798, -34.1488, -1.87586, 25.9878)
 mesh = SubResource("PlaneMesh_seq5c")
 surface_material_override/0 = SubResource("ShaderMaterial_quc2j")
 
@@ -241,7 +246,7 @@ surface_material_override/0 = SubResource("ShaderMaterial_quc2j")
 transform = Transform3D(2.1181, 0, 0, 0, 0.191893, 0, 0, 0, 2.75063, -0.0234926, -0.111074, -0.0719478)
 
 [node name="NPC_NoRequest" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.48014, 1.22339, -2.61528)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.322, 1.22341, -24.7529)
 display_name = "Villager 2"
 npc_id = &"villager_2"
 first_visit_intro = Array[String](["hello there. I do not give out quests."])
@@ -254,7 +259,7 @@ after_request_done_intro = Array[String](["you have completed my friend's quest.
 after_request_done_blocks = Array[ExtResource("3_6q4xb")]([SubResource("Resource_lrvrr")])
 
 [node name="building_pub" parent="SubViewport/WorldRoot" instance=ExtResource("6_m8kbc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.1447, 0.503908, 4.95225)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.697, 0.0119551, -17.1854)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="SubViewport/WorldRoot/building_pub"]
 transform = Transform3D(0.00244342, -0.957322, 0.289014, -1.03533e-08, 0.289015, 0.957325, -0.999997, -0.00233915, 0.000706174, -12.7951, 4.2304, -5.81346)
@@ -266,7 +271,7 @@ spot_angle = 45.7249
 spot_angle_attenuation = 1.86607
 
 [node name="Test_Object" parent="SubViewport/WorldRoot" instance=ExtResource("8_hfefy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.43478, 0, -6.82656)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -139.407, 1.52588e-05, -28.9642)
 
 [node name="InteractableEmitter" type="Node" parent="SubViewport/WorldRoot/Test_Object"]
 script = ExtResource("9_48rgd")
@@ -275,7 +280,7 @@ speaker_name = " object"
 flavour_lines = Array[String](["hello there"])
 
 [node name="NPC_Green" parent="SubViewport/WorldRoot" instance=ExtResource("9_3dqgm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3424, 1.18815, -5.47289)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130.5, 1.18817, -27.6105)
 npc_id = &"villager"
 first_visit_intro = Array[String](["hello here is a quest to visit a square idk bro im just a sprite"])
 repeat_intro = Array[String](["go to the square you big egg"])
@@ -289,23 +294,24 @@ notes = "touch the thing"
 target_object_id = &"test_object"
 
 [node name="CameraZoomArea" parent="SubViewport/WorldRoot" instance=ExtResource("12_7ex7d")]
-transform = Transform3D(3.28671, 0, 0, 0, 3.28671, 0, 0, 0, 3.28671, 17.439, 1.32845, -19.0851)
+transform = Transform3D(3.28671, 0, 0, 0, 3.28671, 0, 0, 0, 3.28671, -123.403, 1.32847, -41.2227)
 target_arm_length = 10.0
 zoom_lerp_speed = 1.0
 exit_zoom_lerp_speed = 2.0
 
 [node name="Player" parent="SubViewport/WorldRoot" instance=ExtResource("1_t6srd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.594, 7.4881, -9.35786)
-walk_speed = 4.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130.248, 7.48812, -31.4955)
+walk_speed = 4.5
 jump_height = 4.0
 mouse_sensitivity = 0.002
+camera_far = 2000.0
 water_speed_multiplier = 0.6
 water_jump_multiplier = 1.1
 water_gravity_multiplier = 0.5
 water_accel_multiplier = 0.6
 
 [node name="NPC_Base" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.31112, 0.92437, -17.9757)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -137.531, 0.924385, -40.1133)
 display_name = "Guy"
 npc_id = &"guy"
 first_visit_intro = Array[String](["Hello!", "{speaker=[wave]Player[/wave]}{side=right}hello!"])
@@ -319,7 +325,7 @@ notes = "talk to 2 other people"
 need_unique = 2
 
 [node name="NPC_Base2" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.91801, 0.988791, -12.0015)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.76, 0.988806, -34.1391)
 display_name = "dave"
 npc_id = &"dave"
 first_visit_intro = Array[String](["give bucket to tom"])
@@ -337,7 +343,7 @@ script = ExtResource("23_ahe8m")
 acceptable_items = Array[StringName]([&"bucket"])
 
 [node name="Test_Object2" parent="SubViewport/WorldRoot" instance=ExtResource("8_hfefy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.29411, 0, -10.1592)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -146.136, 1.52588e-05, -32.2969)
 
 [node name="InteractableEmitter" type="Node" parent="SubViewport/WorldRoot/Test_Object2"]
 script = ExtResource("9_48rgd")
@@ -353,7 +359,7 @@ item_id = &"bucket"
 remove_node_on_pickup = true
 
 [node name="NPC_Base3" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.42541, 0.306012, -7.49364)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -147.267, 0.306027, -29.6313)
 display_name = "tom"
 npc_id = &"tom"
 first_visit_intro = Array[String](["hi"])

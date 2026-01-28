@@ -10,9 +10,11 @@ func _on_area_entered(a: Area3D) -> void:
 		var player := get_tree().get_first_node_in_group("Player")
 		if player and player.has_method("set_camera_in_water"):
 			player.call("set_camera_in_water", true)
+			player.call("set_in_water", true)
 
 func _on_area_exited(a: Area3D) -> void:
 	if a.is_in_group("PlayerCamera"):
 		var player := get_tree().get_first_node_in_group("Player")
 		if player and player.has_method("set_camera_in_water"):
 			player.call("set_camera_in_water", false)
+			player.call("set_in_water", false)
