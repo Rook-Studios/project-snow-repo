@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://c2js2mh8kf1gj"]
+[gd_scene load_steps=3 format=3 uid="uid://dgich73df5s7p"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/request_toast.gd" id="1_ld47h"]
 [ext_resource type="Theme" uid="uid://ujvnsi28r4ks" path="res://resources/ui_main_theme.tres" id="2_hviqp"]
@@ -28,8 +28,10 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="Panel/MarginContainer"]
 texture_filter = 1
+custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
+theme_override_constants/outline_size = 48
 theme_override_font_sizes/font_size = 24
-text = "aaaaaaaaaaa aaaaaaaaaaaaa aaaaaaaaaaa"
+text = "abcdefghijklmnopqrstuvqxyz"
 horizontal_alignment = 1
 autowrap_mode = 3

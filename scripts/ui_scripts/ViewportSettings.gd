@@ -15,6 +15,7 @@ var _scale: int = 1  # 1 or 2
 func _ready() -> void:
 	_apply_resolution()
 
+
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ratio"):
 		_toggle_ratio()
@@ -40,7 +41,7 @@ func _apply_ui_layout() -> void:
 	var is_4_3 := (_base_width == width_4_3)
 	var sd := Vector2(0.8, 0.8) if is_4_3 else Vector2.ONE
 	var pd := Vector2(170, 760) if is_4_3 else Vector2(170, 720)
-	var sj := Vector2(0.8, 0.8) if is_4_3 else Vector2(0.9, 0.9)
+	var sj := Vector2(0.9, 0.8) if is_4_3 else Vector2(0.9, 0.9)
 	var pj := Vector2(160, -75) if is_4_3 else Vector2(-40, -40)
 
 	var dlg := get_tree().get_first_node_in_group("DialogueUI")

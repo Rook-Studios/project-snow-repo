@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bjjnyfmc5m8rv"]
+[gd_scene load_steps=37 format=3 uid="uid://bjjnyfmc5m8rv"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -12,11 +12,10 @@
 [ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="6_m8kbc"]
 [ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="8_hfefy"]
 [ext_resource type="PackedScene" uid="uid://dnw722ljcfa5t" path="res://scenes/NPCs/NPC_Green.tscn" id="9_3dqgm"]
-[ext_resource type="Script" path="res://scripts/components/InteractableEmitter.gd" id="9_48rgd"]
 [ext_resource type="Script" path="res://scripts/autoloads/StartInteractObjectRequest.gd" id="10_e728n"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="12_7ex7d"]
-[ext_resource type="PackedScene" uid="uid://dgich73df5s7p" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
-[ext_resource type="Shader" path="res://resources/shaders/water.gdshader" id="14_nt52v"]
+[ext_resource type="Material" uid="uid://4risjssarmes" path="res://resources/shaders/skybox.tres" id="13_1ux0w"]
+[ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
 [ext_resource type="Texture2D" uid="uid://v6m6afadec0r" path="res://assets/environment/env_txt_snow.png" id="15_6irae"]
 [ext_resource type="Script" path="res://scripts/components/StartTalkNUniqueRequest.gd" id="16_1qp80"]
 [ext_resource type="Texture2D" uid="uid://b75hy3kwymv0y" path="res://assets/environment/env_txt_snow_nrm.png" id="16_atab1"]
@@ -38,23 +37,186 @@ volumetric_fog_density = 0.0
 adjustment_enabled = true
 adjustment_contrast = 1.1
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_seq5c"]
+[sub_resource type="Resource" id="Resource_bsn4f"]
+script = ExtResource("3_6q4xb")
+lines = Array[String](["I will now present you with a choice, to test the UI theming of the labels. i am also talking a lot more to allow for for for the impossibly fast word wrapping to work properly.", "here is your choice, pick your favourite answer."])
+choice_line_index = 1
+choice_labels = Array[String](["yes", "no, fug off"])
+followup_choice0 = Array[String](["ah you were nice to me. thank you."])
+followup_choice1 = Array[String](["how rude."])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = false
+play_once = false
+block_id = &""
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_quc2j"]
-render_priority = -1
-shader = ExtResource("14_nt52v")
-shader_parameter/albedo = Color(0.431373, 0, 0.847059, 1)
-shader_parameter/scroll_speed1 = Vector2(0.05, 0)
-shader_parameter/scroll_speed2 = Vector2(-0.03, 0)
-shader_parameter/blend_factor = 0.5
-shader_parameter/scale1 = Vector2(1, 1)
-shader_parameter/scale2 = Vector2(1, 1)
-shader_parameter/wave_strength = 0.01
-shader_parameter/wave_scale = 0.02
-shader_parameter/pixelation_level = 64
-shader_parameter/FoamSize = 0.5
-shader_parameter/WaterOpacity = 1.0
-shader_parameter/FoamGlowIntensity = 0.5
+[sub_resource type="Resource" id="Resource_lrvrr"]
+script = ExtResource("3_6q4xb")
+lines = Array[String](["this block should only appear after you have completed my friend's [tornado]quest[/tornado], regardless of whether or not you have spoken to me before"])
+choice_line_index = -1
+choice_labels = Array[String]([])
+followup_choice0 = Array[String]([])
+followup_choice1 = Array[String]([])
+followup_choice2 = Array[String]([])
+tail_lines = Array[String]([])
+show_on_first_visit = true
+show_on_repeat_visits = true
+play_once = false
+block_id = &""
+
+[sub_resource type="GDScript" id="GDScript_f5kb7"]
+script/source = "	extends Node
+	class_name InteractableEmitter
+
+	@export_group(\"Identity\")
+	@export var object_id: StringName = &\"\"
+
+	@export_group(\"Prompt\")
+	@export var prompt_verb: String = \"Interact\"
+	@export var prompt_path: NodePath = ^\"../Prompt3D\" # points to sibling by default
+	@export var show_prompt_only_when_grounded: bool = true
+
+	@export_group(\"Zone\")
+	@export var zone_path: NodePath = ^\"../InteractZone\" # points to sibling by default
+
+	@export_group(\"Input\")
+	@export var interact_action: StringName = &\"interact\"
+
+	@export_group(\"Flavour Text\")
+	@export var speaker_name: String = \" \"
+	@export_multiline var flavour_lines: Array[String] = []
+	@export var show_flavour_on_interact: bool = true
+
+	@export_group(\"Flavour Voice Blip (optional)\")
+	@export var flavour_voice_stream: AudioStream
+	@export var flavour_voice_pitch_min: float = 0.95
+	@export var flavour_voice_pitch_max: float = 1.05
+	@export var flavour_voice_blip_every: int = 2
+
+	var _player_in := false
+	var _player_body: CharacterBody3D = null
+
+	# Prevent re-triggering flavour text while it's already open
+	var _flavour_lock := false
+
+	@onready var _zone: Area3D = get_node_or_null(zone_path) as Area3D
+	@onready var _prompt: Label3D = get_node_or_null(prompt_path) as Label3D
+
+
+	func _ready() -> void:
+		if _prompt:
+			_prompt.visible = false
+			_update_prompt_text()
+
+		if InputHints != null:
+			if not InputHints.scheme_changed.is_connected(_on_scheme_changed):
+				InputHints.scheme_changed.connect(_on_scheme_changed)
+
+		if _zone:
+			_zone.body_entered.connect(_on_body_entered)
+			_zone.body_exited.connect(_on_body_exited)
+
+
+	func _process(_delta: float) -> void:
+		_update_prompt_visible()
+
+
+	func _unhandled_input(e: InputEvent) -> void:
+		if not _player_in:
+			return
+		if object_id == StringName():
+			return
+
+		# If flavour text is currently showing, don't restart it.
+		if _flavour_lock:
+			return
+
+		# If DialogueUI is already open (NPC talk, other flavour text), don't interact through it.
+		var ui := _dialogue_ui()
+		if ui != null and ui.is_open():
+			return
+
+		if e.is_action_pressed(interact_action):
+			if show_prompt_only_when_grounded and _player_body and not _player_body.is_on_floor():
+				return
+
+			# 1) Emit interaction event (so INTERACT_OBJECT requests can complete)
+			# If flavour will be shown, delay completion until dialogue closes.
+			var will_show_flavour := show_flavour_on_interact and flavour_lines.size() > 0 and ui != null
+			if not will_show_flavour:
+				EventBus.emit_interacted(object_id)
+
+
+			# 2) Optional: show flavour text via DialogueUI
+			if show_flavour_on_interact and flavour_lines.size() > 0 and ui != null:
+				_flavour_lock = true
+
+				ui.set_speaker_name(speaker_name)
+
+				# Generic blip voice for objects (optional)
+				ui.set_voice(flavour_voice_stream, flavour_voice_pitch_min, flavour_voice_pitch_max, flavour_voice_blip_every)
+
+				# Unlock once the dialogue closes (ONE SHOT so we don't leak connections)
+				if not ui.closed.is_connected(_on_ui_closed_unlock):
+					ui.closed.connect(_on_ui_closed_unlock, CONNECT_ONE_SHOT)
+
+				ui.show_lines(flavour_lines)
+
+			get_viewport().set_input_as_handled()
+
+
+	func _on_ui_closed_unlock() -> void:
+		_flavour_lock = false
+		EventBus.emit_interacted(object_id)
+
+
+	func _on_body_entered(b: Node) -> void:
+		if b is CharacterBody3D and b.is_in_group(\"Player\"):
+			_player_body = b
+			_player_in = true
+			_update_prompt_visible()
+
+
+	func _on_body_exited(b: Node) -> void:
+		if b == _player_body:
+			_player_body = null
+		if b is CharacterBody3D and b.is_in_group(\"Player\"):
+			_player_in = false
+		_update_prompt_visible()
+
+
+	func _on_scheme_changed(_is_controller: bool) -> void:
+		_update_prompt_text()
+
+
+	func _update_prompt_text() -> void:
+		if not _prompt:
+			return
+		var using_controller := InputHints != null and InputHints.using_controller
+		_prompt.text = (\"Press A to %s\" % prompt_verb) if using_controller else (\"Press E to %s\" % prompt_verb)
+
+
+	func _update_prompt_visible() -> void:
+		if not _prompt:
+			return
+		if not _player_in:
+			_prompt.visible = false
+			return
+		if show_prompt_only_when_grounded and _player_body and not _player_body.is_on_floor():
+			_prompt.visible = false
+			return
+		_prompt.visible = true
+
+
+	func _dialogue_ui() -> Node:
+		# get_first_node_in_group exists in Godot 4.x; this is just wrapped for clarity.
+		return get_tree().get_first_node_in_group(\"DialogueUI\")
+"
+
+[sub_resource type="BoxMesh" id="BoxMesh_epcot"]
+material = ExtResource("13_1ux0w")
+flip_faces = true
 
 [sub_resource type="Gradient" id="Gradient_ynwpe"]
 offsets = PackedFloat32Array(0.2, 1)
@@ -140,34 +302,6 @@ detiling_rotation = 0.577
 mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_ll0re")])
 texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_di8be")])
 
-[sub_resource type="Resource" id="Resource_bsn4f"]
-script = ExtResource("3_6q4xb")
-lines = Array[String](["I will now present you with a choice, to test the UI theming of the labels. i am also talking a lot more to allow for for for the impossibly fast word wrapping to work properly.", "here is your choice, pick your favourite answer."])
-choice_line_index = 1
-choice_labels = Array[String](["yes", "no, fug off"])
-followup_choice0 = Array[String](["ah you were nice to me. thank you."])
-followup_choice1 = Array[String](["how rude."])
-followup_choice2 = Array[String]([])
-tail_lines = Array[String]([])
-show_on_first_visit = true
-show_on_repeat_visits = false
-play_once = false
-block_id = &""
-
-[sub_resource type="Resource" id="Resource_lrvrr"]
-script = ExtResource("3_6q4xb")
-lines = Array[String](["this block should only appear after you have completed my friend's [tornado]quest[/tornado], regardless of whether or not you have spoken to me before"])
-choice_line_index = -1
-choice_labels = Array[String]([])
-followup_choice0 = Array[String]([])
-followup_choice1 = Array[String]([])
-followup_choice2 = Array[String]([])
-tail_lines = Array[String]([])
-show_on_first_visit = true
-show_on_repeat_visits = true
-play_once = false
-block_id = &""
-
 [sub_resource type="ViewportTexture" id="ViewportTexture_2e0dw"]
 viewport_path = NodePath("SubViewport")
 
@@ -187,26 +321,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.345874, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport/WorldRoot"]
 environment = SubResource("Environment_houe5")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport/WorldRoot"]
-transform = Transform3D(-0.023737, 0.90936, -0.415333, 0.0518869, 0.416011, 0.907878, 0.998371, -4.27941e-08, -0.0570587, 0, 7.92166, 0)
-light_color = Color(0.319367, 0.176, 0.55, 1)
-light_energy = 2.0
-shadow_enabled = true
-
-[node name="water" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
-transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 468.217, -88.9659, -1.87586, 1.08792)
-mesh = SubResource("PlaneMesh_seq5c")
-surface_material_override/0 = SubResource("ShaderMaterial_quc2j")
-
-[node name="Terrain3D" type="Terrain3D" parent="SubViewport/WorldRoot"]
-data_directory = "res://terraindd"
-material = SubResource("Terrain3DMaterial_elg0g")
-assets = SubResource("Terrain3DAssets_8smka")
-mesh_lods = 6
-vertex_spacing = 4.0
-top_level = true
-metadata/_edit_lock_ = true
 
 [node name="NPC_NoRequest" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.48014, 1.22339, -2.61528)
@@ -237,10 +351,19 @@ spot_angle_attenuation = 1.86607
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.15921, 0, 2.5313)
 
 [node name="InteractableEmitter" type="Node" parent="SubViewport/WorldRoot/Test_Object"]
-script = ExtResource("9_48rgd")
+script = SubResource("GDScript_f5kb7")
 object_id = &"test_object"
+prompt_verb = null
+prompt_path = null
+show_prompt_only_when_grounded = null
+zone_path = null
+interact_action = null
 speaker_name = " object"
-flavour_lines = Array[String](["hello there"])
+flavour_lines = Array[String](["hello there."])
+show_flavour_on_interact = null
+flavour_voice_pitch_min = null
+flavour_voice_pitch_max = null
+flavour_voice_blip_every = null
 
 [node name="NPC_Green" parent="SubViewport/WorldRoot" instance=ExtResource("9_3dqgm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.251608, 1.18815, 3.88497)
@@ -267,6 +390,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.4881, 0)
 walk_speed = 4.0
 jump_height = 4.0
 mouse_sensitivity = 0.002
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
+transform = Transform3D(86.8418, 0, 0, 0, 86.8418, 0, 0, 0, 86.8418, 0, 0, 0)
+visible = false
+mesh = SubResource("BoxMesh_epcot")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport/WorldRoot"]
+transform = Transform3D(-0.023737, 0.90936, -0.415333, 0.0518869, 0.416011, 0.907878, 0.998371, -7.08359e-09, -0.0570587, 0, 7.92166, 0)
+light_color = Color(0.319367, 0.176, 0.55, 1)
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="Terrain3D" type="Terrain3D" parent="SubViewport/WorldRoot"]
+data_directory = "res://terraindd"
+material = SubResource("Terrain3DMaterial_elg0g")
+assets = SubResource("Terrain3DAssets_8smka")
+mesh_lods = 6
+vertex_spacing = 4.0
+top_level = true
+metadata/_edit_lock_ = true
 
 [node name="NPC_Base" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.28287, 0.92437, -8.6178)

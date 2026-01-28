@@ -20,9 +20,9 @@ mesh = SubResource("BoxMesh_lgvml")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
 shape = SubResource("BoxShape3D_5huoa")
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="InteractZone" type="Area3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractZone"]
 shape = SubResource("CylinderShape3D_88nm3")
 
 [node name="Prompt3D" type="Label3D" parent="."]
