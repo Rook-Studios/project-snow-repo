@@ -16,7 +16,7 @@
 [ext_resource type="Script" path="res://scripts/autoloads/StartInteractObjectRequest.gd" id="10_e728n"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="12_7ex7d"]
 [ext_resource type="Material" uid="uid://4risjssarmes" path="res://resources/shaders/skybox.tres" id="13_1ux0w"]
-[ext_resource type="PackedScene" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
+[ext_resource type="PackedScene" uid="uid://c2js2mh8kf1gj" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
 [ext_resource type="Texture2D" uid="uid://v6m6afadec0r" path="res://assets/environment/env_txt_snow.png" id="15_6irae"]
 [ext_resource type="Texture2D" uid="uid://b75hy3kwymv0y" path="res://assets/environment/env_txt_snow_nrm.png" id="16_atab1"]
 [ext_resource type="PackedScene" uid="uid://coko3tb7w8x27" path="res://scenes/debug_ui.tscn" id="20_4ea6t"]
@@ -255,7 +255,6 @@ material = SubResource("Terrain3DMaterial_elg0g")
 assets = SubResource("Terrain3DAssets_8smka")
 mesh_lods = 6
 vertex_spacing = 4.0
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.345874, 0)
 top_level = true
 metadata/_edit_lock_ = true
 
