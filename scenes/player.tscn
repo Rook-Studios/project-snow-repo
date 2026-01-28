@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://b5xhwx0w58u0h"]
+[gd_scene load_steps=15 format=3 uid="uid://b5xhwx0w58u0h"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_h1snv"]
+[ext_resource type="Script" path="res://scripts/camera_probe.gd" id="2_ih2cf"]
 [ext_resource type="Texture2D" uid="uid://7tkht8cs06kr" path="res://assets/player/player_sheet.png" id="3_01ab7"]
 [ext_resource type="FontFile" uid="uid://c1wlgwafi75c" path="res://resources/fonts/CutePixel.ttf" id="4_cpe0a"]
 [ext_resource type="Texture2D" uid="uid://dd6jce7l3pe6t" path="res://assets/test-assets/test_shadow.png" id="4_hdues"]
@@ -8,6 +9,9 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6esgl"]
 radius = 0.663228
 height = 1.61063
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7ocdk"]
+radius = 2.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2671d"]
 transparency = 1
@@ -271,7 +275,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.239515, 0)
 
 [node name="SpringArm3D" type="SpringArm3D" parent="Pivot"]
 
-[node name="Camera3D" type="Camera3D" parent="Pivot/SpringArm3D"]
+[node name="Camera3D" type="Camera3D" parent="Pivot/SpringArm3D" groups=["PlayerCamera"]]
+
+[node name="CameraProbe" type="Area3D" parent="Pivot/SpringArm3D" groups=["PlayerCamera"]]
+script = ExtResource("2_ih2cf")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/SpringArm3D/CameraProbe"]
+shape = SubResource("SphereShape3D_7ocdk")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1.48441, 0, 0, 0, 1.48441, 0, 0, 0, 1.48441, -0.05, -0.0535631, 0)

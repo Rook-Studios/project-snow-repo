@@ -51,6 +51,7 @@ folder_colors={
 DialogueUI=""
 Player=""
 JournalUI=""
+PlayerCamera=""
 
 [input]
 

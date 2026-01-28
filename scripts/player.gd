@@ -512,8 +512,10 @@ func set_in_water(v: bool, water_id: StringName = &"") -> void:
 	_in_water = v
 	_water_id = water_id
 
-	# 1) Tint the player sprite
-	sprite.modulate = water_sprite_tint if _in_water else _sprite_normal_tint
 
-	# 2) Enable/disable the screen effect
-	water_rect.visible = true if _in_water else false
+var _camera_in_water := false
+
+func set_camera_in_water(v: bool) -> void:
+	_camera_in_water = v
+	# Drive ONLY the visual effect here (overlay)
+	water_rect.visible = _camera_in_water
