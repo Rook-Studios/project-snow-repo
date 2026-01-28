@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://c35teqfyyrgan"]
+[gd_scene load_steps=8 format=3 uid="uid://c35teqfyyrgan"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/dialogue_ui.gd" id="1_fh07e"]
 [ext_resource type="Theme" uid="uid://ujvnsi28r4ks" path="res://resources/ui_main_theme.tres" id="2_mya3m"]
 [ext_resource type="FontFile" uid="uid://cyoqwih45m8h8" path="res://resources/fonts/GrapeSoda.ttf" id="3_mmxw0"]
 [ext_resource type="Texture2D" uid="uid://cavgayjgqs270" path="res://assets/ui/ui_name_bar.png" id="4_4we25"]
+[ext_resource type="FontFile" uid="uid://dptnbpt5pt4jn" path="res://resources/fonts/Daydream DEMO.otf" id="5_kw8b3"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_14vrw"]
 texture = ExtResource("4_4we25")
@@ -63,7 +64,7 @@ fit_content = true
 
 [node name="NamePanel" type="Panel" parent="Panel"]
 texture_filter = 1
-custom_minimum_size = Vector2(256, 0)
+custom_minimum_size = Vector2(512, 0)
 layout_mode = 1
 offset_left = 6.0
 offset_top = -58.0
@@ -74,22 +75,24 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_14vrw")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/NamePanel"]
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 46.0
-offset_top = -25.0
-offset_right = 196.0
-offset_bottom = 27.0
-grow_vertical = 2
+offset_left = 28.5001
+offset_top = 23.25
+offset_right = 1328.5
+offset_bottom = 75.25
 
-[node name="NameLabel" type="Label" parent="Panel/NamePanel/HBoxContainer"]
+[node name="NameLabel" type="RichTextLabel" parent="Panel/NamePanel/HBoxContainer"]
 texture_filter = 1
+clip_contents = false
+custom_minimum_size = Vector2(512, 0)
 layout_mode = 2
-size_flags_horizontal = 0
-theme_override_constants/outline_size = 16
-theme_override_font_sizes/font_size = 28
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/outline_size = 20
+theme_override_fonts/normal_font = ExtResource("5_kw8b3")
+theme_override_font_sizes/normal_font_size = 32
+bbcode_enabled = true
 text = "NAME"
+fit_content = true
 
 [node name="ChoicesPanel" type="Panel" parent="Panel"]
 texture_filter = 1

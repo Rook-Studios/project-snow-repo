@@ -6,13 +6,21 @@ signal choice_selected(line_index: int, choice_index: int)
 
 @onready var _panel: Panel = $Panel
 @onready var _line: RichTextLabel = $Panel/MarginContainer/VBoxContainer/LineLabel
-@onready var _name: Label = $Panel/NamePanel/HBoxContainer/NameLabel
+@onready var _name: RichTextLabel = $Panel/NamePanel/HBoxContainer/NameLabel
 @onready var _voice: AudioStreamPlayer = $VoicePlayer
 @onready var _choices: HBoxContainer = $Panel/ChoicesPanel/ChoicesBox
 @onready var choices_panel: Control = $Panel/ChoicesPanel
+@onready var _name_panel: Control = $Panel/NamePanel
+
+var _default_side: String = "left"
+var _current_side: String = "left"
+
 
 var _open := false
 var _just_opened := false
+var _default_speaker: String = ""
+var _current_speaker: String = ""
+
 
 # --- Typewriter settings ---
 @export var chars_per_second: float = 40.0
@@ -53,11 +61,21 @@ func _ready() -> void:
 	_line.bbcode_enabled = true
 	_line.autowrap_mode = TextServer.AUTOWRAP_WORD
 	_line.scroll_active = false
+	
+	_apply_name_side(_default_side)
+
 	add_to_group("DialogueUI")
 
-# Public API
 func set_speaker_name(name_text: String) -> void:
 	_name.text = name_text
+	_current_speaker = name_text
+	_default_speaker = name_text
+
+	# default side for NPC lines unless overridden by tags
+	_current_side = _default_side
+	_apply_name_side(_current_side)
+
+
 
 func set_voice(stream: AudioStream, pitch_min: float = 0.95, pitch_max: float = 1.05, blip_every: int = 2) -> void:
 	_voice.stream = stream
@@ -105,16 +123,30 @@ func is_open() -> bool:
 
 # --- Typewriter core (RichTextLabel + visible_characters) ---
 func _start_typing(text_bbcode: String) -> void:
-	# Pre-wrap once so long words don't "kick" mid-reveal.
+	var parsed := _extract_line_tags(text_bbcode)
+
+	# speaker
+	if parsed.speaker != "":
+		_current_speaker = parsed.speaker
+		_name.text = _current_speaker
+
+	# side
+	if parsed.side != "":
+		_current_side = parsed.side
+		_apply_name_side(_current_side)
+
+	text_bbcode = parsed.text
+
 	_full_text_bbcode = _prewrap_bbcode(text_bbcode)
 
 	_line.visible_characters = 0
 	_line.clear()
-	_line.append_text(_full_text_bbcode) # keep BBCode support
+	_line.append_text(_full_text_bbcode)
 
 	_char_accum = 0.0
 	_blip_counter = 0
 	_typing = true
+
 
 func _prewrap_bbcode(bbcode: String) -> String:
 	# If the label has no width yet, don't attempt wrapping.
@@ -364,3 +396,87 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel"):
 		_advance_or_close()
+
+func _extract_speaker_tag(line: String) -> Dictionary:
+	# Format: {speaker=Name} rest of line...
+	# Safe with BBCode because we use curly braces.
+	var s := line.strip_edges()
+	if not s.begins_with("{speaker="):
+		return {"text": line}
+
+	var end := s.find("}")
+	if end == -1:
+		return {"text": line} # malformed, ignore
+
+	var header := s.substr(0, end + 1) # "{speaker=Name}"
+	var name := header.replace("{speaker=", "").replace("}", "").strip_edges()
+	var rest := s.substr(end + 1, s.length() - (end + 1)).strip_edges()
+
+	return {"speaker": name, "text": rest}
+
+func _extract_line_tags(line: String) -> Dictionary:
+	# Supports prefixes like:
+	# {speaker=Name}{side=left} Hello
+	# {side=right}{speaker=Player} Hi
+	var s := line.strip_edges()
+
+	var speaker := ""
+	var side := ""
+	var changed := true
+
+	while changed and s.begins_with("{"):
+		changed = false
+		var end := s.find("}")
+		if end == -1:
+			break
+
+		var header := s.substr(0, end + 1) # "{...}"
+		var body := header.substr(1, header.length() - 2) # "speaker=Name"
+		var eq := body.find("=")
+		if eq == -1:
+			break
+
+		var key := body.substr(0, eq).strip_edges()
+		var val := body.substr(eq + 1).strip_edges()
+
+		if key == "speaker":
+			speaker = val
+			changed = true
+		elif key == "side":
+			# normalize
+			val = val.to_lower()
+			if val == "left" or val == "right":
+				side = val
+				changed = true
+
+		if changed:
+			s = s.substr(end + 1, s.length() - (end + 1)).strip_edges()
+
+	return {
+		"speaker": speaker,
+		"side": side,
+		"text": s
+	}
+
+func _apply_name_side(side: String) -> void:
+	if _name_panel == null:
+		return
+
+	# Use editor-defined width (Custom Minimum Size X) as the source of truth.
+	var w := _name_panel.custom_minimum_size.x
+	if w <= 0.0:
+		w = 1.0 # fallback if you didn't set a min size
+
+	if side == "right":
+		_name_panel.anchor_left = 1.0
+		_name_panel.anchor_right = 1.0
+		_name_panel.offset_left = -w
+		_name_panel.offset_right = 0.0
+	else:
+		_name_panel.anchor_left = 0.0
+		_name_panel.anchor_right = 0.0
+		_name_panel.offset_left = 0.0
+		_name_panel.offset_right = w
+
+	# Optional: force a layout refresh next frame (helps if it "pops" late)
+	_name_panel.call_deferred("queue_redraw")

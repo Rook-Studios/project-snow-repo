@@ -258,6 +258,13 @@ vertex_spacing = 4.0
 top_level = true
 metadata/_edit_lock_ = true
 
+[node name="NPC_Base" parent="SubViewport/WorldRoot" instance=ExtResource("2_gmodg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.28287, 0.92437, -8.6178)
+display_name = "Guy"
+npc_id = &"guy"
+first_visit_intro = Array[String](["Hello!", "{speaker=[wave]Player[/wave]}{side=right}hello!"])
+repeat_intro = Array[String](["hello again!"])
+
 [node name="LowResLayer" type="CanvasLayer" parent="."]
 
 [node name="ColorRect" type="ColorRect" parent="LowResLayer"]
