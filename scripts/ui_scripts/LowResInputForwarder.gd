@@ -14,3 +14,7 @@ func _input(event: InputEvent) -> void:
 
 	# Forward ALL input events to the SubViewport world
 	lowres_vp.push_input(event)
+
+
+func _on_water_area_entered(area: Area3D) -> void:
+	pass # Replace with function body.

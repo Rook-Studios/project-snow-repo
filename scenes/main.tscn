@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://bjjnyfmc5m8rv"]
+[gd_scene load_steps=40 format=3 uid="uid://bjjnyfmc5m8rv"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://c35teqfyyrgan" path="res://scenes/dialogue_ui.tscn" id="3_kjn6l"]
 [ext_resource type="Texture2D" uid="uid://cfs12tcw7r8g3" path="res://assets/test-assets/skybox_test.png" id="3_ygiuo"]
 [ext_resource type="AudioStream" uid="uid://buoxr5nskhn4c" path="res://assets/test-assets/sfx_voice_test.ogg" id="4_72185"]
+[ext_resource type="Texture2D" uid="uid://dy6qo2nuikj2v" path="res://assets/environment/env_txt_water.png" id="5_tf7ry"]
+[ext_resource type="Texture2D" uid="uid://cnfr6sreohedk" path="res://assets/environment/env_txt_water2.png" id="6_dwpao"]
 [ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="6_m8kbc"]
 [ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="8_hfefy"]
 [ext_resource type="PackedScene" uid="uid://dnw722ljcfa5t" path="res://scenes/NPCs/NPC_Green.tscn" id="9_3dqgm"]
@@ -43,18 +45,20 @@ adjustment_contrast = 1.1
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_quc2j"]
 render_priority = -1
 shader = ExtResource("14_nt52v")
-shader_parameter/albedo = Color(0.431373, 0, 0.847059, 1)
+shader_parameter/albedo = Color(0.71, 0.772833, 1, 1)
 shader_parameter/scroll_speed1 = Vector2(0.05, 0)
 shader_parameter/scroll_speed2 = Vector2(-0.03, 0)
 shader_parameter/blend_factor = 0.5
-shader_parameter/scale1 = Vector2(1, 1)
-shader_parameter/scale2 = Vector2(1, 1)
+shader_parameter/scale1 = Vector2(16, 64)
+shader_parameter/scale2 = Vector2(16, 64)
 shader_parameter/wave_strength = 0.01
 shader_parameter/wave_scale = 0.02
 shader_parameter/pixelation_level = 64
 shader_parameter/FoamSize = 0.5
 shader_parameter/WaterOpacity = 1.0
-shader_parameter/FoamGlowIntensity = 0.5
+shader_parameter/FoamGlowIntensity = 0.1
+shader_parameter/water_texture1 = ExtResource("5_tf7ry")
+shader_parameter/water_texture2 = ExtResource("6_dwpao")
 
 [sub_resource type="Gradient" id="Gradient_ynwpe"]
 offsets = PackedFloat32Array(0.2, 1)

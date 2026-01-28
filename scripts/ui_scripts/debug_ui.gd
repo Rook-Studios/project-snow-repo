@@ -5,6 +5,7 @@ extends CanvasLayer
 @onready var input_label: Label = $VBoxContainer/input_label
 @onready var ui_label: Label = $VBoxContainer/ui_state_label
 @onready var quest_label: Label = $VBoxContainer/quest_label
+@onready var position_label: Label = $VBoxContainer/position_label
 
 
 @onready var player := get_tree().get_first_node_in_group("Player")
@@ -15,6 +16,7 @@ func _physics_process(_delta: float) -> void:
 	_update_input()
 	_update_ui()
 	_update_quests()
+	_update_position()
 
 
 func _update_fps() -> void:
@@ -66,4 +68,9 @@ func _update_quests() -> void:
 
 	quest_label.text = "Requests: %d active / %d done | NPCs talked: %d" % [
 		active, done, talked
+	]
+
+func _update_position() -> void:
+	position_label.text = "X: %.1f, Y: %.1f" % [
+		player.position.x, player.position.y
 	]
