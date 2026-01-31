@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://bjjnyfmc5m8rv"]
+[gd_scene load_steps=37 format=3 uid="uid://bjjnyfmc5m8rv"]
 
 [ext_resource type="Script" path="res://scripts/ui_scripts/LowResInputForwarder.gd" id="1_hpbec"]
 [ext_resource type="PackedScene" uid="uid://b5xhwx0w58u0h" path="res://scenes/player.tscn" id="1_t6srd"]
@@ -13,21 +13,18 @@
 [ext_resource type="Texture2D" uid="uid://cnfr6sreohedk" path="res://assets/environment/env_txt_water2.png" id="6_dwpao"]
 [ext_resource type="PackedScene" uid="uid://bogy33rgnbdeu" path="res://assets/buildings/pub/building_pub.glb" id="6_m8kbc"]
 [ext_resource type="PackedScene" uid="uid://5ed8mgm36emu" path="res://scenes/water_volume.tscn" id="7_34p5p"]
-[ext_resource type="Texture2D" uid="uid://cn88oidruy1l8" path="res://assets/environment/env_txt_dirt_nrm.png" id="7_khx2q"]
 [ext_resource type="PackedScene" uid="uid://mrp6ep301k5g" path="res://scenes/NPCs/Test_Object.tscn" id="8_hfefy"]
 [ext_resource type="PackedScene" uid="uid://dnw722ljcfa5t" path="res://scenes/NPCs/NPC_Green.tscn" id="9_3dqgm"]
 [ext_resource type="Script" path="res://scripts/components/InteractableEmitter.gd" id="9_48rgd"]
 [ext_resource type="Script" path="res://scripts/autoloads/StartInteractObjectRequest.gd" id="10_e728n"]
-[ext_resource type="Texture2D" uid="uid://byjd13b4v0sal" path="res://assets/environment/env_txt_dirt.png" id="10_q82fm"]
 [ext_resource type="PackedScene" uid="uid://diw31r6nqdmlk" path="res://scenes/camera_zoom_area.tscn" id="12_7ex7d"]
 [ext_resource type="PackedScene" uid="uid://dgich73df5s7p" path="res://scenes/request_toast.tscn" id="14_gsv2o"]
 [ext_resource type="Shader" path="res://resources/shaders/water.gdshader" id="14_nt52v"]
-[ext_resource type="Texture2D" uid="uid://v6m6afadec0r" path="res://assets/environment/env_txt_snow.png" id="15_6irae"]
 [ext_resource type="Script" path="res://scripts/components/StartTalkNUniqueRequest.gd" id="16_1qp80"]
-[ext_resource type="Texture2D" uid="uid://b75hy3kwymv0y" path="res://assets/environment/env_txt_snow_nrm.png" id="16_atab1"]
 [ext_resource type="Script" path="res://scripts/components/PickupItemOnInteract.gd" id="16_xgen3"]
 [ext_resource type="PackedScene" uid="uid://coko3tb7w8x27" path="res://scenes/debug_ui.tscn" id="20_4ea6t"]
 [ext_resource type="Script" path="res://scripts/components/StartDeliveryRequest.gd" id="22_fyfmb"]
+[ext_resource type="PackedScene" uid="uid://c7xyu80w4k7aj" path="res://assets/environment/environment.glb" id="22_o5sts"]
 [ext_resource type="Script" path="res://scripts/components/DeliverItemOnTalkFinished.gd" id="23_ahe8m"]
 [ext_resource type="Shader" path="res://resources/shaders/water2d.gdshader" id="24_sb3c2"]
 
@@ -46,100 +43,6 @@ volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 adjustment_enabled = true
 adjustment_contrast = 1.1
-
-[sub_resource type="Gradient" id="Gradient_6baa2"]
-offsets = PackedFloat32Array(0.2, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_y8e7j"]
-noise_type = 2
-frequency = 0.03
-cellular_jitter = 3.0
-cellular_return_type = 0
-domain_warp_enabled = true
-domain_warp_type = 1
-domain_warp_amplitude = 50.0
-domain_warp_fractal_type = 2
-domain_warp_fractal_lacunarity = 1.5
-domain_warp_fractal_gain = 1.0
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qpuxb"]
-seamless = true
-color_ramp = SubResource("Gradient_6baa2")
-noise = SubResource("FastNoiseLite_y8e7j")
-
-[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_2v14n"]
-_shader_parameters = {
-"bias_distance": 512.0,
-"blend_sharpness": 0.6,
-"depth_blur": 0.0,
-"enable_macro_variation": true,
-"enable_projection": true,
-"height_blending": true,
-"macro_variation1": Color(1, 1, 1, 1),
-"macro_variation2": Color(1, 1, 1, 1),
-"macro_variation_slope": 0.333,
-"mipmap_bias": 1.0,
-"noise1_angle": 0.0,
-"noise1_offset": Vector2(0.5, 0.5),
-"noise1_scale": 0.04,
-"noise2_scale": 0.076,
-"noise3_scale": 0.225,
-"noise_texture": SubResource("NoiseTexture2D_qpuxb"),
-"projection_angular_division": 2.0,
-"projection_threshold": 0.8,
-"world_noise_fragment_normals": false,
-"world_noise_height": 64.0,
-"world_noise_lod_distance": 7500.0,
-"world_noise_max_octaves": 4,
-"world_noise_min_octaves": 2,
-"world_noise_offset": Vector3(0, 0, 0),
-"world_noise_region_blend": 0.33,
-"world_noise_scale": 5.0,
-"world_space_normal_blend": false
-}
-world_background = 2
-texture_filtering = 1
-show_region_grid = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w8qqr"]
-transparency = 4
-cull_mode = 2
-vertex_color_use_as_albedo = true
-backlight_enabled = true
-backlight = Color(0.5, 0.5, 0.5, 1)
-distance_fade_mode = 1
-distance_fade_min_distance = 128.0
-distance_fade_max_distance = 96.0
-
-[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_jvkou"]
-generated_type = 1
-height_offset = 0.5
-material_override = SubResource("StandardMaterial3D_w8qqr")
-last_lod = 0
-last_shadow_lod = 0
-lod0_range = 128.0
-
-[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_y0fic"]
-name = "env_txt_snow"
-albedo_texture = ExtResource("15_6irae")
-normal_texture = ExtResource("16_atab1")
-normal_depth = 0.329
-roughness = 1.0
-detiling_rotation = 0.42
-detiling_shift = 0.1
-
-[sub_resource type="Terrain3DTextureAsset" id="Terrain3DTextureAsset_dwc8t"]
-name = "env_txt_dirt"
-id = 1
-albedo_texture = ExtResource("10_q82fm")
-normal_texture = ExtResource("7_khx2q")
-detiling_rotation = 0.5
-detiling_shift = 0.5
-
-[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_jkabe"]
-mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_jvkou")])
-texture_list = Array[Terrain3DTextureAsset]([SubResource("Terrain3DTextureAsset_y0fic"), SubResource("Terrain3DTextureAsset_dwc8t")])
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_seq5c"]
 
@@ -223,19 +126,6 @@ transform = Transform3D(-0.023737, 0.90936, -0.415333, 0.0518869, 0.416011, 0.90
 light_color = Color(0.319367, 0.176, 0.55, 1)
 light_energy = 2.0
 shadow_enabled = true
-directional_shadow_mode = 1
-
-[node name="Terrain3D" type="Terrain3D" parent="SubViewport/WorldRoot"]
-data_directory = "res://terraindd"
-material = SubResource("Terrain3DMaterial_2v14n")
-assets = SubResource("Terrain3DAssets_jkabe")
-show_grid = true
-collision_mode = 3
-mesh_size = 24
-cull_margin = 10.0
-show_region_grid = true
-top_level = true
-metadata/_edit_lock_ = true
 
 [node name="water" type="MeshInstance3D" parent="SubViewport/WorldRoot"]
 transform = Transform3D(488.387, 0, 0, 0, 100, 0, 0, 0, 516.798, -34.1488, -1.87586, 25.9878)
@@ -301,7 +191,7 @@ exit_zoom_lerp_speed = 2.0
 
 [node name="Player" parent="SubViewport/WorldRoot" instance=ExtResource("1_t6srd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -130.248, 7.48812, -31.4955)
-walk_speed = 4.5
+walk_speed = 20.0
 jump_height = 4.0
 mouse_sensitivity = 0.002
 camera_far = 2000.0
@@ -367,6 +257,9 @@ first_visit_intro = Array[String](["hi"])
 [node name="DeliverItemOnTalkFinished" type="Node" parent="SubViewport/WorldRoot/NPC_Base3"]
 script = ExtResource("23_ahe8m")
 acceptable_items = Array[StringName]([&"bucket"])
+
+[node name="environment" parent="SubViewport/WorldRoot" instance=ExtResource("22_o5sts")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -138.469, 0, 0)
 
 [node name="LowResLayer" type="CanvasLayer" parent="."]
 
